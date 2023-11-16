@@ -42,7 +42,6 @@ const Name = styled.p`
 `; */
 
 export default function Player({ id, name }: IPlayerInfo) {
-  const [imgError, setImgError] = useState(false);
   const [imgUrl, setImgUrl] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
   );
@@ -74,11 +73,27 @@ export default function Player({ id, name }: IPlayerInfo) {
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
 
-    if (!imgError) {
-      setImgError(true);
-      setImgUrl(
-        `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`
-      );
+    switch (imgUrl) {
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`:
+        setImgUrl(
+          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`
+        );
+        break;
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`:
+        setImgUrl(
+          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`
+        );
+        break;
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`:
+        setImgUrl(
+          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`
+        );
+        break;
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
+        setImgUrl("No Image!");
+        break;
+      default:
+        break;
     }
   };
 
