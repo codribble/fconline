@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  // createBrowserRouter,
+  createHashRouter,
+} from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import Layout from "./components/layout";
@@ -11,7 +15,7 @@ import Signin from "./routes/signin";
 import Players from "./routes/players";
 import Records from "./routes/records";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,

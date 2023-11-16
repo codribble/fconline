@@ -1,6 +1,12 @@
 import styled from "styled-components";
-import { PlayerInfo } from "../routes/players";
+import { IPlayerInfo } from "../routes/players";
 import { ReactEventHandler, useEffect, useState } from "react";
+
+export interface ISeasonInfo {
+  seasonId: number;
+  seasonImg: string;
+  className: string;
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -19,6 +25,13 @@ const Column = styled.div`
   }
 `;
 
+const Row = styled.div`
+  display: flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 10px;
+`;
+
 const Thumbs = styled.div``;
 
 const SeasonImg = styled.div``;
@@ -28,25 +41,38 @@ const Name = styled.p`
   font-size: 20px;
 `;
 
-export default function Player({ id, name, season }: PlayerInfo) {
+export default function Player({ id, name }: IPlayerInfo) {
   const [imgError, setImgError] = useState(false);
   const [imgUrl, setImgUrl] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
   );
   const pId = Number(id.toString().substr(3, 6));
   const sId = Number(id.toString().substr(0, 3));
-  const [playerSeason, setPlayerSeason] = useState([]);
+  const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
+  const [season, setSeason] = useState<ISeasonInfo | null>(null);
 
   useEffect(() => {
-    season.map((data) => {
-      if (data.seasonId === sId) setPlayerSeason(data);
-    });
+    const seasonData = async () => {
+      const data = await fetch(
+        "https://static.api.nexon.co.kr/fconline/latest/seasonid.json"
+      )
+        .then((res) => res.json())
+        .then((data) => data);
+
+      setSeasons(data);
+    };
+
+    seasonData();
   }, []);
+
+  useEffect(() => {
+    seasons.map((data: ISeasonInfo) => {
+      if (data.seasonId.toString() === sId.toString()) setSeason(data);
+    });
+  }, [sId, seasons]);
 
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
-
-    console.log(e);
 
     if (!imgError) {
       setImgError(true);
@@ -63,19 +89,22 @@ export default function Player({ id, name, season }: PlayerInfo) {
           <img
             src={imgUrl}
             onError={onError}
-            loading="lazy"
           />
         </Thumbs>
       </Column>
       <Column>
-        {id}
-        <SeasonImg>
-          <img
-            src={playerSeason.seasonImg}
-            alt={name}
-          />
-        </SeasonImg>
-        <Name>{name}</Name>
+        {/* <Row>{id}</Row> */}
+        <Row>
+          {season && (
+            <SeasonImg>
+              <img
+                src={season?.seasonImg}
+                alt={name}
+              />
+            </SeasonImg>
+          )}
+          <Name>{name}</Name>
+        </Row>
       </Column>
     </Wrapper>
   );

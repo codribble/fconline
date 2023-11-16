@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Loading from "../components/loading";
 import Player from "../components/player";
-import useFetch from "../hooks/useFetch";
 import Pagination from "../components/pagination";
 
-export interface PlayerInfo {
+export interface IPlayerInfo {
   id: number;
   name: string;
-  thumbs?: string;
 }
 
 const Wrapper = styled.div`
@@ -32,25 +30,24 @@ const List = styled.div`
 
 export default function Players() {
   const [isLoading, setIsLoading] = useState(true);
-  const [players, setPlayers] = useState([]);
-  const [season] = useFetch(
-    "https://static.api.nexon.co.kr/fconline/latest/seasonid.json"
-  );
+  const [players, setPlayers] = useState<IPlayerInfo[]>([]);
   const [page, setPage] = useState(1);
   const limit = 50;
   const offset = (page - 1) * limit;
 
   useEffect(() => {
-    fetch("https://static.api.nexon.co.kr/fconline/latest/spid.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setPlayers(data);
-        setIsLoading(false);
-      });
+    const playerData = async () => {
+      const data = await fetch(
+        "https://static.api.nexon.co.kr/fconline/latest/spid.json"
+      )
+        .then((res) => res.json())
+        .then((data) => data);
 
-    /* fetch("https://static.api.nexon.co.kr/fconline/latest/seasonid.json")
-      .then((res) => res.json())
-      .then((data) => setSeason(data)); */
+      setPlayers(data);
+    };
+    playerData();
+
+    setIsLoading(false);
   }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,8 +55,6 @@ export default function Players() {
 
     if (!value) return;
   };
-
-  // console.log(players);
 
   return (
     <>
@@ -74,13 +69,14 @@ export default function Players() {
           />
 
           <List>
-            {players.slice(offset, offset + limit).map((player) => (
-              <Player
-                key={player.id}
-                season={season}
-                {...player}
-              />
-            ))}
+            {players
+              .slice(offset, offset + limit)
+              .map((player: IPlayerInfo) => (
+                <Player
+                  key={player.id}
+                  {...player}
+                />
+              ))}
           </List>
 
           <Pagination
