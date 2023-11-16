@@ -14,6 +14,7 @@ import Login from "./routes/login";
 import Signin from "./routes/signin";
 import Players from "./routes/players";
 import Records from "./routes/records";
+import "./index.css";
 
 const router = createHashRouter([
   {
