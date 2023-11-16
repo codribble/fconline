@@ -1,4 +1,4 @@
-import styled from "styled-components";
+// import styled from "styled-components";
 import { IPlayerInfo } from "../routes/players";
 import { ReactEventHandler, useEffect, useState } from "react";
 
@@ -8,7 +8,7 @@ export interface ISeasonInfo {
   className: string;
 }
 
-const Wrapper = styled.div`
+/* const Wrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 20px;
@@ -39,7 +39,7 @@ const SeasonImg = styled.div``;
 const Name = styled.p`
   font-weight: 600;
   font-size: 20px;
-`;
+`; */
 
 export default function Player({ id, name }: IPlayerInfo) {
   const [imgError, setImgError] = useState(false);
@@ -83,29 +83,32 @@ export default function Player({ id, name }: IPlayerInfo) {
   };
 
   return (
-    <Wrapper>
-      <Column>
-        <Thumbs>
+    <li className="flex items-center gap-5 p-5 first:border-t border-b border-solid border-gray-300 border-opacity-50">
+      <div className="flex flex-col gap-3">
+        <div className={`relative w-[100px]`}>
           <img
             src={imgUrl}
+            alt={name}
             onError={onError}
+            className="w-full h-auto"
           />
-        </Thumbs>
-      </Column>
-      <Column>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
         {/* <Row>{id}</Row> */}
-        <Row>
+        <div className="flex self-start items-center gap-2">
           {season && (
-            <SeasonImg>
+            <div className="w-[30px]">
               <img
                 src={season?.seasonImg}
                 alt={name}
+                className="w-full h-auto"
               />
-            </SeasonImg>
+            </div>
           )}
-          <Name>{name}</Name>
-        </Row>
-      </Column>
-    </Wrapper>
+          <strong className="font-semibold text-xl">{name}</strong>
+        </div>
+      </div>
+    </li>
   );
 }

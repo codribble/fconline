@@ -1,4 +1,4 @@
-import styled from "styled-components";
+// import styled from "styled-components";
 
 export interface Pagination {
   setPage(page: number): void;
@@ -7,7 +7,7 @@ export interface Pagination {
   page: number;
 }
 
-const Wrapper = styled.div`
+/* const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -41,7 +41,7 @@ const Button = styled.button`
 
 const Separator = styled.div`
   margin: 0px 4px;
-`;
+`; */
 
 export default function Pagination({
   setPage,
@@ -52,63 +52,95 @@ export default function Pagination({
   const numPages = Math.ceil(total / limit);
 
   return (
-    <Wrapper>
-      <Button
-        onClick={() => setPage(page - 1)}
-        disabled={page === 1}
-      >
-        &lt;
-      </Button>
+    <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
+      {page > 1 && (
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+        >
+          &lt;
+        </button>
+      )}
 
-      <Button
+      <button
+        className={`flex items-center justify-center py-1 px-2 ${
+          page === 1 ? "bg-cyan-600" : "bg-cyan-900"
+        } border-0 rounded-md text-sm text-white cursor-pointer`}
         onClick={() => setPage(1)}
-        className={page === 1 ? "current" : ""}
       >
         1
-      </Button>
+      </button>
 
-      {page > 3 && <Separator>...</Separator>}
+      {page > 3 && <span className="my-0 mx-1">...</span>}
 
       {page === numPages && numPages > 3 && (
-        <Button onClick={() => setPage(page - 2)}>{page - 2}</Button>
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          onClick={() => setPage(page - 2)}
+        >
+          {page - 2}
+        </button>
       )}
 
       {page > 2 && (
-        <Button onClick={() => setPage(page - 1)}>{page - 1}</Button>
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          onClick={() => setPage(page - 1)}
+        >
+          {page - 1}
+        </button>
       )}
 
       {page !== 1 && page !== numPages && (
-        <Button
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-600 border-0 rounded-md text-sm text-white cursor-pointer"
           onClick={() => setPage(page)}
-          className="current"
         >
           {page}
-        </Button>
+        </button>
       )}
 
       {page < numPages - 1 && (
-        <Button onClick={() => setPage(page + 1)}>{page + 1}</Button>
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          onClick={() => setPage(page + 1)}
+        >
+          {page + 1}
+        </button>
       )}
 
       {page === 1 && numPages > 3 && (
-        <Button onClick={() => setPage(page + 2)}>{page + 2}</Button>
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          onClick={() => setPage(page + 2)}
+        >
+          {page + 2}
+        </button>
       )}
 
-      {page < numPages - 2 && <Separator>...</Separator>}
+      {page < numPages - 2 && <span className="my-0 mx-1">...</span>}
 
-      <Button
-        onClick={() => setPage(numPages)}
-        className={page === numPages ? "current" : ""}
-      >
-        {numPages}
-      </Button>
+      {numPages > 1 && (
+        <button
+          className={`flex items-center justify-center py-1 px-2 ${
+            page === numPages ? "bg-cyan-600" : "bg-cyan-900"
+          } border-0 rounded-md text-sm text-white cursor-pointer`}
+          onClick={() => setPage(numPages)}
+        >
+          {numPages}
+        </button>
+      )}
 
-      <Button
-        onClick={() => setPage(page + 1)}
-        disabled={page === numPages}
-      >
-        &gt;
-      </Button>
-    </Wrapper>
+      {page !== numPages && (
+        <button
+          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          onClick={() => setPage(page + 1)}
+          disabled={page === numPages}
+        >
+          &gt;
+        </button>
+      )}
+    </div>
   );
 }
