@@ -1,5 +1,12 @@
 // import styled from "styled-components";
 
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+} from "@heroicons/react/20/solid";
+
 export interface Pagination {
   setPage(page: number): void;
   total: number;
@@ -52,32 +59,58 @@ export default function Pagination({
   const numPages = Math.ceil(total / limit);
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
-      {page > 1 && (
-        <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-        >
-          &lt;
-        </button>
-      )}
+    <nav
+      className="isolate flex flex-wrap items-center justify-center mt-8 -space-x-px rounded-md shadow-sm"
+      aria-label="Pagination"
+    >
+      <button
+        className="relative inline-flex items-center rounded-l-md px-2 py-2 bg-white text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-70"
+        onClick={() => setPage(page - 3)}
+        disabled={page === 1}
+      >
+        <span className="sr-only">이전 페이지 그룹</span>
+        <ChevronDoubleLeftIcon
+          className="h-5 w-5"
+          aria-hidden="true"
+        />
+      </button>
 
       <button
-        className={`flex items-center justify-center py-1 px-2 ${
-          page === 1 ? "bg-cyan-600" : "bg-cyan-900"
-        } border-0 rounded-md text-sm text-white cursor-pointer`}
+        className="relative inline-flex items-center px-2 py-2 bg-white text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-70"
+        onClick={() => setPage(page - 1)}
+        disabled={page === 1}
+        title="이전"
+      >
+        <span className="sr-only">이전</span>
+        <ChevronLeftIcon
+          className="h-5 w-5"
+          aria-hidden="true"
+        />
+      </button>
+
+      <button
+        className={`relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold cursor-pointer ${
+          page === 1
+            ? "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"
+        }`}
         onClick={() => setPage(1)}
+        title="1 페이지"
       >
         1
       </button>
 
-      {page > 3 && <span className="my-0 mx-1">...</span>}
+      {page > 3 && (
+        <span className="relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+          ...
+        </span>
+      )}
 
       {page === numPages && numPages > 3 && (
         <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          className="relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           onClick={() => setPage(page - 2)}
+          title={`${page - 2} 페이지`}
         >
           {page - 2}
         </button>
@@ -85,8 +118,9 @@ export default function Pagination({
 
       {page > 2 && (
         <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          className="relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           onClick={() => setPage(page - 1)}
+          title={`${page - 1} 페이지`}
         >
           {page - 1}
         </button>
@@ -94,8 +128,10 @@ export default function Pagination({
 
       {page !== 1 && page !== numPages && (
         <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-600 border-0 rounded-md text-sm text-white cursor-pointer"
+          className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          aria-current="page"
           onClick={() => setPage(page)}
+          title={`${page} 페이지`}
         >
           {page}
         </button>
@@ -103,8 +139,9 @@ export default function Pagination({
 
       {page < numPages - 1 && (
         <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          className="relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           onClick={() => setPage(page + 1)}
+          title={`${page + 1} 페이지`}
         >
           {page + 1}
         </button>
@@ -112,35 +149,59 @@ export default function Pagination({
 
       {page === 1 && numPages > 3 && (
         <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
+          className="relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           onClick={() => setPage(page + 2)}
+          title={`${page + 2} 페이지`}
         >
           {page + 2}
         </button>
       )}
 
-      {page < numPages - 2 && <span className="my-0 mx-1">...</span>}
+      {page < numPages - 2 && (
+        <span className="relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+          ...
+        </span>
+      )}
 
       {numPages > 1 && (
         <button
-          className={`flex items-center justify-center py-1 px-2 ${
-            page === numPages ? "bg-cyan-600" : "bg-cyan-900"
-          } border-0 rounded-md text-sm text-white cursor-pointer`}
+          className={`relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold cursor-pointer ${
+            page === numPages
+              ? "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"
+          }`}
           onClick={() => setPage(numPages)}
+          title={`${numPages} 페이지`}
         >
           {numPages}
         </button>
       )}
 
-      {page !== numPages && (
-        <button
-          className="flex items-center justify-center py-1 px-2 bg-cyan-900 border-0 rounded-md text-sm text-white cursor-pointer"
-          onClick={() => setPage(page + 1)}
-          disabled={page === numPages}
-        >
-          &gt;
-        </button>
-      )}
-    </div>
+      <button
+        className="relative inline-flex items-center px-2 py-2 bg-white text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-70"
+        onClick={() => setPage(page + 1)}
+        disabled={page === numPages}
+        title="다음"
+      >
+        <span className="sr-only">다음</span>
+        <ChevronRightIcon
+          className="h-5 w-5"
+          aria-hidden="true"
+        />
+      </button>
+
+      <button
+        className="relative inline-flex items-center rounded-r-md px-2 py-2 bg-white text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-70"
+        onClick={() => setPage(page + 3)}
+        disabled={page === numPages}
+        title="다음 페이지 그룹"
+      >
+        <span className="sr-only">다음 페이지 그룹</span>
+        <ChevronDoubleRightIcon
+          className="h-5 w-5"
+          aria-hidden="true"
+        />
+      </button>
+    </nav>
   );
 }

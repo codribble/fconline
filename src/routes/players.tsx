@@ -32,6 +32,7 @@ export default function Players() {
   const [isLoading, setIsLoading] = useState(true);
   const [players, setPlayers] = useState<IPlayerInfo[]>([]);
   const [keywords, setKeywords] = useState("");
+  const [nameList, setNameList] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -58,41 +59,89 @@ export default function Players() {
     setIsLoading(false);
   }, [keywords]);
 
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const regEx = /^[a-zA-Z0-9가-힣]+$/;
+
+    const uniqueName = [...new Set(players.map((data) => data.name))]
+      .sort()
+      .filter((data) => {
+        return (
+          regEx.test(value.toString().split(" ").join()) &&
+          data
+            .toString()
+            .split(" ")
+            .join()
+            .includes(value.toString().split(" ").join())
+        );
+      });
+
+    setNameList(uniqueName);
+
+    setKeywords(value);
+  };
+
   return (
     <>
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="w-full max-w-3xl mx-auto">
+        <>
           <div className="flex items-center gap-5">
-            <label
-              htmlFor="name"
-              className="w-[100px]"
-            >
-              선수명
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={keywords}
-              onChange={(e) => setKeywords(e.target.value)}
-              className="w-full px-2 py-2 text-black"
-              placeholder="선수명"
-            />
+            <div className="w-[100px]">
+              <label
+                htmlFor="name"
+                className="w-full"
+              >
+                선수명
+              </label>
+            </div>
+            <div className="relative w-full">
+              <input
+                id="name"
+                type="text"
+                value={keywords}
+                onChange={onChange}
+                className="w-full px-2 py-2 text-black"
+                placeholder="선수명"
+                autoComplete="off"
+              />
+              <div className="absolute top-full w-full bg-gray-50 border border-solid border-black z-[1]">
+                <ul role="list">
+                  {keywords &&
+                    nameList.map((data) => (
+                      <li>
+                        <a
+                          href="#"
+                          className="block w-full p-[10px] text-gray-900 hover:bg-gray-600 hover:text-white focus:bg-gray-600 focus:text-white"
+                        >
+                          {data}
+                        </a>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </div>
           </div>
           <div className="flex flex-col flex-wrap mt-10">
             <ul
               role="list"
               className="flex flex-col flex-wrap gap-3"
             >
-              {players
-                .slice(offset, offset + limit)
-                .map((player: IPlayerInfo) => (
-                  <Player
-                    key={player.id}
-                    {...player}
-                  />
-                ))}
+              {players.length ? (
+                players
+                  .slice(offset, offset + limit)
+                  .map((player: IPlayerInfo) => (
+                    <Player
+                      key={player.id}
+                      {...player}
+                    />
+                  ))
+              ) : (
+                <li className="w-full py-10 text-center">
+                  {keywords ? "검색된" : "등록된"} 선수가 없습니다.
+                </li>
+              )}
             </ul>
 
             <Pagination
@@ -102,7 +151,7 @@ export default function Players() {
               setPage={setPage}
             />
           </div>
-        </div>
+        </>
       )}
     </>
   );

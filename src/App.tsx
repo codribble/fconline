@@ -1,3 +1,4 @@
+import "./index.css";
 import { useEffect, useState } from "react";
 import {
   RouterProvider,
@@ -14,7 +15,7 @@ import Login from "./routes/login";
 import Signin from "./routes/signin";
 import Players from "./routes/players";
 import Records from "./routes/records";
-import "./index.css";
+import Users from "./routes/users";
 
 const router = createHashRouter([
   {
@@ -45,6 +46,10 @@ const router = createHashRouter([
         path: "records",
         element: <Records />,
       },
+      {
+        path: "users",
+        element: <Users />,
+      },
     ],
   },
 ]);
@@ -72,10 +77,10 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col items-center h-screen">
       <GlobalStyles />
       {isLoading ? <Loading /> : <RouterProvider router={router} />}
-    </>
+    </div>
   );
 }
 

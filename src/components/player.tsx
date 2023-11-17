@@ -42,6 +42,7 @@ const Name = styled.p`
 `; */
 
 export default function Player({ id, name }: IPlayerInfo) {
+  const [isLoading, setIsLoading] = useState(true);
   const [imgUrl, setImgUrl] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
   );
@@ -93,37 +94,42 @@ export default function Player({ id, name }: IPlayerInfo) {
         setImgUrl("No Image!");
         break;
       default:
+        setIsLoading(false);
         break;
     }
   };
 
   return (
-    <li className="flex items-center gap-5 p-5 first:border-t border-b border-solid border-gray-300 border-opacity-50">
-      <div className="flex flex-col gap-3">
-        <div className={`relative w-[100px]`}>
-          <img
-            src={imgUrl}
-            alt={name}
-            onError={onError}
-            className="w-full h-auto"
-          />
-        </div>
-      </div>
-      <div className="flex flex-col gap-3">
-        {/* <Row>{id}</Row> */}
-        <div className="flex self-start items-center gap-2">
-          {season && (
-            <div className="w-[30px]">
+    <>
+      {isLoading && (
+        <li className="flex items-center gap-5 p-5 first:border-t border-b border-solid border-gray-300 border-opacity-50">
+          <div className="flex flex-col gap-3">
+            <div className={`relative w-[100px]`}>
               <img
-                src={season?.seasonImg}
+                src={imgUrl}
                 alt={name}
+                onError={onError}
                 className="w-full h-auto"
               />
             </div>
-          )}
-          <strong className="font-semibold text-xl">{name}</strong>
-        </div>
-      </div>
-    </li>
+          </div>
+          <div className="flex flex-col gap-3">
+            {/* <Row>{id}</Row> */}
+            <div className="flex self-start items-center gap-2">
+              {season && (
+                <div className="w-[30px]">
+                  <img
+                    src={season?.seasonImg}
+                    alt={name}
+                    className="w-full h-auto"
+                  />
+                </div>
+              )}
+              <strong className="font-semibold text-xl">{name}</strong>
+            </div>
+          </div>
+        </li>
+      )}
+    </>
   );
 }
