@@ -7,7 +7,7 @@ export default function Header() {
         <nav>
           <ul
             role="list"
-            className="flex items-center gap-[10px]"
+            className="flex items-center gap-5"
           >
             <li>
               <Link
