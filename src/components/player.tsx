@@ -47,7 +47,7 @@ export default function Player({ id, name }: IPlayerInfo) {
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
   );
   const pId = Number(id.toString().substr(3, 6));
-  const sId = Number(id.toString().substr(0, 3));
+  const seasonId = Number(id.toString().substr(0, 3));
   const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [season, setSeason] = useState<ISeasonInfo | null>(null);
   /* const headers = {
@@ -70,9 +70,9 @@ export default function Player({ id, name }: IPlayerInfo) {
 
   useEffect(() => {
     seasons.map((data: ISeasonInfo) => {
-      if (data.seasonId.toString() === sId.toString()) setSeason(data);
+      if (data.seasonId.toString() === seasonId.toString()) setSeason(data);
     });
-  }, [sId, seasons]);
+  }, [seasonId, seasons]);
 
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
