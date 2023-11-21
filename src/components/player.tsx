@@ -50,6 +50,9 @@ export default function Player({ id, name }: IPlayerInfo) {
   const sId = Number(id.toString().substr(0, 3));
   const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [season, setSeason] = useState<ISeasonInfo | null>(null);
+  /* const headers = {
+    Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+  }; */
 
   useEffect(() => {
     const seasonData = async () => {

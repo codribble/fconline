@@ -158,6 +158,7 @@ export default function Players() {
           )}
         </div>
       </div>
+
       <div className="flex flex-col flex-wrap mt-10">
         <ul
           role="list"
