@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Tier from "../components/tier";
 
 export interface IUserInfo {
   accessId: string;
@@ -10,8 +11,8 @@ export interface IBestTier {
   matchType: number;
   division: number;
   achievementDate: string;
-  desc?: string;
-  tier?: string;
+  desc: string;
+  tier: string;
 }
 
 export interface IMatchType {
@@ -31,6 +32,7 @@ export default function Users() {
   const [bestTier, setBestTier] = useState<IBestTier[]>([]);
   const [matchType, setMatchType] = useState([]);
   const [divisionType, setDivisionType] = useState([]);
+  const [voltaDivisionType, setVoltaDivisionType] = useState([]);
   const headers = {
     Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
   };
@@ -43,6 +45,10 @@ export default function Users() {
     fetch("https://static.api.nexon.co.kr/fconline/latest/division.json")
       .then((res) => res.json())
       .then((data) => setDivisionType(data));
+
+    fetch("https://static.api.nexon.co.kr/fconline/latest/division_volta.json")
+      .then((res) => res.json())
+      .then((data) => setVoltaDivisionType(data));
   }, []);
 
   const onKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,8 +93,21 @@ export default function Users() {
                     )
                 );
                 divisionData.forEach((item: IDivisionType) => {
-                  data.filter((d: IBestTier, idx: string | number) => {
+                  data.filter((d: IBestTier, idx: number) => {
                     if (d.division === item.divisionId)
+                      data[idx].tier = item.divisionName;
+                  });
+                });
+
+                const voltaDivisionData = voltaDivisionType.filter(
+                  (division: IDivisionType) =>
+                    data.some(
+                      (tier: IBestTier) => division.divisionId === tier.division
+                    )
+                );
+                voltaDivisionData.forEach((item: IDivisionType) => {
+                  data.filter((d: IBestTier, idx: number) => {
+                    if (d.matchType > 200 && d.division === item.divisionId)
                       data[idx].tier = item.divisionName;
                   });
                 });
@@ -106,6 +125,8 @@ export default function Users() {
 
     setIsSearching(false);
   };
+
+  console.log(user);
 
   return (
     <>
@@ -135,6 +156,7 @@ export default function Users() {
           <input
             type="submit"
             value="검색"
+            className="w-[60px] bg-indigo-600 cursor-pointer"
           />
         </div>
       </form>
@@ -143,39 +165,42 @@ export default function Users() {
         <div className="flex flex-col flex-wrap mt-10">
           {user && (
             <div className="w-full">
-              <h2 className="">
+              <h2 className="font-bold text-[30px] text-center">
                 Lv.{user.level} {user.nickname}
               </h2>
 
               {bestTier && (
-                <div className="w-full mt-[30px]">
-                  <p className="block mb-[20px]">
-                    <strong className="font-bold text-xl">
-                      {user.nickname}
-                    </strong>
-                    님의 역대 최고 등급
-                  </p>
+                <>
+                  <div className="w-full mt-[30px]">
+                    <p className="block mb-[20px]">
+                      <strong className="font-bold text-xl">
+                        {user.nickname}
+                      </strong>
+                      님의 역대 최고 등급
+                    </p>
 
-                  <ul
-                    role="list"
-                    className="flex flex-col gap-[20px] w-full"
-                  >
-                    {bestTier.map((data: IBestTier) => (
-                      <li
-                        key={data.matchType}
-                        className="flex flex-col gap-[10px] p-5 border border-white border-solid rounded-2xl"
-                      >
-                        <p>
-                          {data.desc?.includes("모드")
-                            ? data.desc
-                            : data.desc + " 모드"}
-                        </p>
-                        <p>{data.tier}</p>
-                        <p>{data.achievementDate}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    <ul
+                      role="list"
+                      className="flex flex-wrap gap-[20px] w-full"
+                    >
+                      {bestTier.map((data: IBestTier) => (
+                        <Tier
+                          key={data.matchType}
+                          {...data}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="w-full mt-[30px]">
+                    <p className="block mb-[20px]">
+                      <strong className="font-bold text-xl">
+                        {user.nickname}
+                      </strong>
+                      님의 역대 최고 등급
+                    </p>
+                  </div>
+                </>
               )}
             </div>
           )}
