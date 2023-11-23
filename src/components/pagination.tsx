@@ -165,10 +165,10 @@ export default function Pagination({
 
       {numPages > 1 && (
         <button
-          className={`relative inline-flex items-center px-4 py-2 bg-white text-sm font-semibold cursor-pointer ${
+          className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold cursor-pointer ${
             page === numPages
               ? "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"
+              : "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"
           }`}
           onClick={() => setPage(numPages)}
           title={`${numPages} 페이지`}
