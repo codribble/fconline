@@ -107,7 +107,7 @@ export default function Player({ id, name }: IPlayerInfo) {
       {isLoading && (
         <li className="flex items-center gap-5 p-5 first:border-t border-b border-solid border-gray-300 border-opacity-50">
           <div className="flex flex-col gap-3">
-            <div className={`relative w-[100px]`}>
+            <div className={`relative w-[80px]`}>
               <img
                 src={imgUrl}
                 alt={name}
