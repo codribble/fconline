@@ -94,7 +94,10 @@ export default function Player({ id, name }: IPlayerInfo) {
         );
         break;
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
-        setImgUrl("No Image!");
+        /* setImgUrl(
+          "https://ssl.nexon.com/s2/game/fc/mobile/squadMaker/default/d_player.png"
+        ); */
+        setImgUrl("/assets/images/no_thumbs.png");
         break;
       default:
         setIsLoading(false);
