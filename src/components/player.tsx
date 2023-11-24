@@ -1,4 +1,5 @@
 // import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
 import { IPlayerInfo } from "../routes/players";
 import { ReactEventHandler, useEffect, useState } from "react";
 
@@ -42,6 +43,7 @@ const Name = styled.p`
 `; */
 
 export default function Player({ id, name }: IPlayerInfo) {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [imgUrl, setImgUrl] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
@@ -97,7 +99,7 @@ export default function Player({ id, name }: IPlayerInfo) {
         /* setImgUrl(
           "https://ssl.nexon.com/s2/game/fc/mobile/squadMaker/default/d_player.png"
         ); */
-        setImgUrl("/assets/images/no_thumbs.png");
+        setImgUrl(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
         break;
       default:
         setIsLoading(false);
@@ -131,7 +133,17 @@ export default function Player({ id, name }: IPlayerInfo) {
                   />
                 </div>
               )}
-              <strong className="font-semibold text-xl">{name}</strong>
+              <Link
+                to={`/players/${id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log(`/players/${id}`);
+                  navigate(`/players/${id}`);
+                }}
+                className="font-semibold text-xl"
+              >
+                {name}
+              </Link>
             </div>
           </div>
         </li>
