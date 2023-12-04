@@ -97,8 +97,8 @@ export default function Player({ id, name }: IPlayerInfo) {
         break;
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
         /* setImgUrl(
-          "https://ssl.nexon.com/s2/game/fc/mobile/squadMaker/default/d_player.png"
-        ); */
+                "https://ssl.nexon.com/s2/game/fc/mobile/squadMaker/default/d_player.png"
+                ); */
         setImgUrl(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
         break;
       default:
@@ -128,7 +128,7 @@ export default function Player({ id, name }: IPlayerInfo) {
                 <div className="w-[30px]">
                   <img
                     src={season?.seasonImg}
-                    alt={name}
+                    alt={season?.className}
                     className="w-full h-auto"
                   />
                 </div>
@@ -137,8 +137,14 @@ export default function Player({ id, name }: IPlayerInfo) {
                 to={`/players/${id}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log(`/players/${id}`);
-                  navigate(`/players/${id}`);
+                  navigate(`/players/${id}`, {
+                    state: {
+                      name: name,
+                      thumbs: imgUrl,
+                      seasonImg: season?.seasonImg,
+                      seasonClass: season?.className,
+                    },
+                  });
                 }}
                 className="font-semibold text-xl"
               >

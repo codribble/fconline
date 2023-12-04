@@ -1,14 +1,26 @@
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+interface IPlayerDetails {
+  id: number;
+  name: string;
+  thumbs: string;
+  seasonImg: string;
+  seasonClass: string;
+}
 
 export default function PlayerDetails() {
-  const { id } = useParams();
+  const location = useLocation();
+  const [info, setInfo] = useState<IPlayerDetails>();
 
-  console.log(`Player ID: ${id}`);
+  useEffect(() => {
+    setInfo(location.state);
+  }, [location.state]);
 
   return (
     <>
-      <h2>선수 상세</h2>
-      <p>선수 ID: {id}</p>
+      <h2>{info?.name}</h2>
+      <img src={info?.thumbs} />
     </>
   );
 }
