@@ -17,6 +17,7 @@ import Players from "./routes/players";
 import Records from "./routes/records";
 import Users from "./routes/users";
 import PlayerDetails from "./routes/player_details";
+import MatchDetail from "./components/match_detail";
 
 const router = createHashRouter([
   {
@@ -54,6 +55,10 @@ const router = createHashRouter([
       {
         path: "users",
         element: <Users />,
+      },
+      {
+        path: "match/:id",
+        element: <MatchDetail />,
       },
     ],
   },
