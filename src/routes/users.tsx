@@ -221,30 +221,6 @@ export default function Users() {
                         role="tablist"
                         className="flex items-center gap-5 mb-5"
                       ></div>
-                      {/* <ul
-                        id="matchCategory"
-                        className="flex items-center gap-5"
-                      >
-                        {matchRecord.length > 0 &&
-                          matchRecord.map(
-                            (match: IMatchType, index) =>
-                              match.list &&
-                              match.list?.length > 0 && (
-                                <li key={match.matchtype}>
-                                  <button
-                                    role="tab"
-                                    data-tabIndex={index}
-                                    onClick={(e) => {
-                                      const slideNum =
-                                        e.currentTarget.dataset.tabIndex;
-                                    }}
-                                  >
-                                    {match.desc}
-                                  </button>
-                                </li>
-                              )
-                          )}
-                      </ul> */}
 
                       <Swiper
                         modules={[EffectFade, Pagination, A11y]}
@@ -262,8 +238,9 @@ export default function Users() {
                           },
                           el: "#matchCategory",
                           clickable: true,
-                          bulletClass: "w-auto h-auto cursor-pointer",
-                          bulletActiveClass: "text-indigo-600 font-bold",
+                          bulletClass: "w-auto h-auto p-2 cursor-pointer",
+                          bulletActiveClass:
+                            "bg-indigo-600 text-white font-bold rounded",
                         }}
                         effect="fade"
                         fadeEffect={{ crossFade: true }}
