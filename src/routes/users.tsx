@@ -162,7 +162,7 @@ export default function Users() {
             name="nickname"
             type="text"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={(e) => setNickname(e.target.value.trim())}
             className="w-[200px] px-2 py-2 text-black"
             placeholder="감독명"
           />
@@ -253,7 +253,7 @@ export default function Users() {
                               match.list &&
                               match.list?.length > 0 && (
                                 <SwiperSlide key={match.matchtype}>
-                                  <ul className="flex flex-wrap gap-y-[15px] gap-x-[50px]">
+                                  <ul className="flex flex-wrap gap-[15px]">
                                     {match.list?.map((id) => (
                                       <MatchItem
                                         key={id}
