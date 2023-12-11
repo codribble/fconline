@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IMatchData } from "./match_detail";
 import moment from "moment";
 
@@ -8,7 +8,8 @@ interface IMatchId {
   userId: string;
 }
 
-export default function MatchItem({ matchId }: IMatchId) {
+export default function MatchItem({ matchId, userId }: IMatchId) {
+  const navigate = useNavigate();
   const [matchData, setMatchData] = useState<IMatchData>();
 
   useEffect(() => {
@@ -32,61 +33,96 @@ export default function MatchItem({ matchId }: IMatchId) {
   // console.log(matchData?.matchInfo);
 
   return (
-    <li className="w-[calc((100%-50px)/2)]">
+    <li className="w-full">
       <Link
         to={`/match/${matchId}`}
+        onClick={(e) => {
+          e.preventDefault();
+          navigate(`/match/${matchId}`, {
+            state: {
+              userId: userId,
+            },
+          });
+        }}
         className="flex flex-col gap-2"
       >
         <div className="flex justify-between">
           {matchData?.matchType && matchData?.matchType < 200 && (
-            <div className="flex items-center justify-between w-[calc(100%-200px)]">
+            <div className="flex items-center justify-between w-2/5">
               {matchData?.matchInfo
-                // .filter((data) => data.accessId !== userId)
-                .map((data, i) =>
-                  i % 2 === 0 ? (
-                    <>
-                      <p
-                        key={i}
-                        className="flex gap-[10px]"
-                      >
-                        <span
-                          className={`${
-                            data.matchDetail.matchResult === "승"
-                              ? "text-indigo-600"
-                              : data.matchDetail.matchResult === "무"
-                              ? "text-yellow-600"
-                              : "text-red-600"
-                          } font-bold`}
-                        >
-                          {data.matchDetail.matchResult}
-                        </span>
-                        <span>{data.nickname}</span>
-                      </p>
-                      <span>vs</span>
-                    </>
-                  ) : (
+                .filter((data) => data.accessId === userId)
+                .map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-[10px]"
+                  >
                     <p
-                      key={i}
-                      className="flex gap-[10px]"
+                      className={`${
+                        data.matchDetail.matchResult === "승"
+                          ? "text-indigo-600"
+                          : data.matchDetail.matchResult === "무"
+                          ? "text-yellow-600"
+                          : "text-red-600"
+                      } font-bold`}
                     >
-                      <span>{data.nickname}</span>
-                      <span
-                        className={`${
-                          data.matchDetail.matchResult === "승"
-                            ? "text-indigo-600"
-                            : data.matchDetail.matchResult === "무"
-                            ? "text-yellow-600"
-                            : "text-red-600"
-                        } font-bold`}
-                      >
-                        {data.matchDetail.matchResult}
-                      </span>
+                      {data.matchDetail.matchResult}
                     </p>
-                  )
-                )}
+                    <p>{data.nickname}</p>
+                  </div>
+                ))}
+              <div className="flex gap-[5px]">
+                {matchData?.matchInfo
+                  .filter((data) => data.accessId === userId)
+                  .map((data, i) => (
+                    <p key={i}>{data.shoot.goalTotalDisplay}</p>
+                  ))}
+                <p>vs</p>
+                {matchData?.matchInfo
+                  .filter((data) => data.accessId !== userId)
+                  .map((data, i) => (
+                    <p key={i}>{data.shoot.goalTotalDisplay}</p>
+                  ))}
+              </div>
+              {matchData?.matchInfo
+                .filter((data) => data.accessId !== userId)
+                .map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-[10px]"
+                  >
+                    <p>{data.nickname}</p>
+                    <p
+                      className={`${
+                        data.matchDetail.matchResult === "승"
+                          ? "text-indigo-600"
+                          : data.matchDetail.matchResult === "무"
+                          ? "text-yellow-600"
+                          : "text-red-600"
+                      } font-bold`}
+                    >
+                      {data.matchDetail.matchResult}
+                    </p>
+                  </div>
+                ))}
             </div>
           )}
           <p>{moment(matchData?.matchDate).format("YYYY-MM-DD HH:mm:ss")}</p>
+          {/* matchData?.matchInfo.map(
+            (data) =>
+              data.accessId === userId && (
+                <p
+                  className={`${
+                    data.matchDetail.matchResult === "승"
+                      ? "text-indigo-600"
+                      : data.matchDetail.matchResult === "무"
+                      ? "text-yellow-600"
+                      : "text-red-600"
+                  } font-bold`}
+                  >
+                  {data.matchDetail.matchResult}
+                </p>
+              )
+          ) */}
         </div>
       </Link>
     </li>
