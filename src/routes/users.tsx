@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Tier from "../components/tier";
 import MatchItem from "../components/match";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
@@ -6,6 +6,7 @@ import { EffectFade, Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface IUserInfo {
   accessId: string;
@@ -34,6 +35,8 @@ export interface IDivisionType {
 }
 
 export default function Users() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadedMatch, setIsLoadedMatch] = useState(false);
   const [nickname, setNickname] = useState("");
@@ -50,6 +53,8 @@ export default function Users() {
   const swiperRef = useRef<SwiperRef>(null);
 
   useEffect(() => {
+    inputRef.current?.focus();
+
     fetch("https://static.api.nexon.co.kr/fconline/latest/matchtype.json")
       .then((res) => res.json())
       .then((data) => setMatchType(data));
@@ -61,11 +66,9 @@ export default function Users() {
     fetch("https://static.api.nexon.co.kr/fconline/latest/division_volta.json")
       .then((res) => res.json())
       .then((data) => setVoltaDivisionType(data));
-
-    inputRef.current?.focus();
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (nickname) {
       const headers = {
         Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
@@ -78,6 +81,7 @@ export default function Users() {
         ).then((res) => res.json());
 
         setUser(userData);
+        sessionStorage.setItem("User", JSON.stringify(userData));
 
         const maxDivisionData = await fetch(
           `https://public.api.nexon.com/openapi/fconline/v1.0/users/${userData?.accessId}/maxdivision`,
@@ -122,6 +126,7 @@ export default function Users() {
         });
 
         setBestTier(maxDivisionData);
+        sessionStorage.setItem("BestTier", JSON.stringify(maxDivisionData));
 
         // 매치 기록도 가져오는 부분을 추가
         const matchRecordData = await Promise.all(
@@ -136,19 +141,67 @@ export default function Users() {
         );
 
         setMatchRecord([...matchRecordData]);
+        sessionStorage.setItem(
+          "MatchRecord",
+          JSON.stringify([...matchRecordData])
+        );
         setIsLoadedMatch(true);
         setIsLoading(false);
       } catch (error) {
         if (error instanceof Error) console.log(error.message);
       }
     }
+  }, [divisionType, matchType, nickname, voltaDivisionType]);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value.trim());
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 검색 시 URL에 검색어 추가
+    navigate(`?q=${nickname}`);
+
     fetchData();
   };
+
+  useEffect(() => {
+    // 새로고침 시 검색 결과를 다시 불러오는 로직 추가
+    const params = new URLSearchParams(location.search);
+    const searchQuery = params.get("q");
+
+    if (searchQuery) {
+      fetchData();
+    }
+  }, [fetchData, location.search]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchQuery = params.get("q");
+
+    if (searchQuery) {
+      setNickname(searchQuery);
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    const storageUser = sessionStorage.getItem("User");
+    const storageTier = sessionStorage.getItem("BestTier");
+    const storageMatch = sessionStorage.getItem("MatchRecord");
+
+    if (storageUser) {
+      setUser(JSON.parse(storageUser));
+    }
+
+    if (storageTier) {
+      setBestTier(JSON.parse(storageTier));
+    }
+
+    if (storageMatch) {
+      setMatchRecord(JSON.parse(storageMatch));
+    }
+  }, []);
 
   return (
     <>
@@ -173,7 +226,7 @@ export default function Users() {
             name="nickname"
             type="text"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value.trim())}
+            onChange={onChange}
             className="w-[200px] px-2 py-2 text-black"
             placeholder="감독명"
           />
@@ -245,8 +298,12 @@ export default function Users() {
                                   ? match.desc
                                   : ""
                             );
+                            const desc =
+                              category.length > _index
+                                ? category[_index]?.desc
+                                : "";
 
-                            return `<span class="${_class}">${category[_index].desc}</span>`;
+                            return `<span class="${_class}">${desc}</span>`;
                           },
                           el: "#matchCategory",
                           clickable: true,
