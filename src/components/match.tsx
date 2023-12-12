@@ -48,7 +48,7 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
       >
         <div className="flex justify-between">
           {matchData?.matchType && matchData?.matchType < 200 && (
-            <div className="flex items-center justify-between w-2/5">
+            <div className="flex items-center gap-[30px] w-2/5">
               {matchData?.matchInfo
                 .filter((data) => data.accessId === userId)
                 .map((data, i) => (
@@ -70,17 +70,27 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
                     <p>{data.nickname}</p>
                   </div>
                 ))}
-              <div className="flex gap-[5px]">
+              <div className="flex items-center gap-[5px]">
                 {matchData?.matchInfo
                   .filter((data) => data.accessId === userId)
                   .map((data, i) => (
-                    <p key={i}>{data.shoot.goalTotalDisplay}</p>
+                    <p
+                      key={i}
+                      className="text-xl font-bold"
+                    >
+                      {data.shoot.goalTotalDisplay}
+                    </p>
                   ))}
                 <p>vs</p>
                 {matchData?.matchInfo
                   .filter((data) => data.accessId !== userId)
                   .map((data, i) => (
-                    <p key={i}>{data.shoot.goalTotalDisplay}</p>
+                    <p
+                      key={i}
+                      className="text-xl font-bold"
+                    >
+                      {data.shoot.goalTotalDisplay}
+                    </p>
                   ))}
               </div>
               {matchData?.matchInfo

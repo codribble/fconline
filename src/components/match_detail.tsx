@@ -1,6 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import { useQuery } from "react-query";
+import { IUserInfo } from "../routes/users";
 
 export interface IMatchData {
   matchId: string;
@@ -131,39 +133,211 @@ export interface IStatus {
 }
 
 export default function MatchDetail() {
-  const params = useParams();
-  const matchId = params.id;
-  const [matchData, setMatchData] = useState<IMatchData>();
+  const { id } = useParams();
+  const { userId } = useLocation().state;
+  const [matchPenalty, setMatchPenalty] = useState(false);
+
+  // react-query의 useQuery를 사용하여 데이터를 가져오고 캐시
+  const { data: matchData } = useQuery(["matchData", id], async () => {
+    const headers = {
+      Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+    };
+
+    const response = await fetch(
+      `https://public.api.nexon.com/openapi/fconline/v1.0/matches/${id}`,
+      { headers }
+    );
+    const data = await response.json();
+
+    return data;
+  });
 
   useEffect(() => {
+    // matchData가 변경될 때 실행
+    if (matchData) {
+      matchData.matchInfo?.forEach((data: IMatchInfo) => {
+        if (data.shoot.shootOutScore) {
+          setMatchPenalty(true);
+        }
+      });
+    }
+  }, [matchData]);
+
+  /* useEffect(() => {
     const headers = {
       Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
     };
 
     const fetchMatchData = async () => {
-      fetch(
-        `https://public.api.nexon.com/openapi/fconline/v1.0/matches/${matchId}`,
+      await fetch(
+        `https://public.api.nexon.com/openapi/fconline/v1.0/matches/${id}`,
         { headers }
       )
         .then((res) => res.json())
-        .then((data) => setMatchData(data));
+        .then((data) => {
+          setMatchData(data);
+
+          data.matchInfo?.map((data: IMatchInfo) => {
+            data.shoot.shootOutScore && setMatchPenalty(true);
+          });
+        });
     };
     fetchMatchData();
-  }, [matchId]);
+  }, [id]); */
 
   return (
-    <div className="flex flex-col gap-10">
-      <div>
-        <div>
-          {matchData?.matchInfo.map((data) => (
-            <p>{data.nickname}</p>
-          ))}
+    <div>
+      <h2 className="mb-[20px] text-[30px] font-bold text-center">
+        경기 상세 기록
+      </h2>
+      <p className="text-center">
+        {moment(matchData?.matchDate).format("YYYY년 MM월 DD일 HH시 mm분")}
+      </p>
+
+      <div className="mt-[20px]">
+        <div className="flex justify-between">
+          {matchData?.matchInfo
+            .filter((data: IUserInfo) => data.accessId === userId)
+            .map((data: IMatchInfo) => (
+              <div
+                key={data.accessId}
+                className="flex flex-col gap-5 w-1/3 text-center"
+              >
+                <p>{data.nickname}</p>
+                {/* <p>
+                    {data.matchDetail.matchEndType === 0
+                      ? data.matchDetail.matchResult
+                      : data.matchDetail.matchEndType === 1
+                      ? "몰수승"
+                      : "몰수패"}
+                  </p> */}
+              </div>
+            ))}
+
+          <div className="flex items-center justify-center gap-5 w-1/3 text-center">
+            {matchData?.matchInfo
+              .filter((data: IUserInfo) => data.accessId === userId)
+              .map((data: IMatchInfo) => (
+                <p key={data.accessId}>
+                  {data.shoot.goalTotalDisplay}
+                  {matchPenalty && " (" + data.shoot.shootOutScore + ")"}
+                </p>
+              ))}
+            -
+            {matchData?.matchInfo
+              .filter((data: IUserInfo) => data.accessId !== userId)
+              .map((data: IMatchInfo) => (
+                <p key={data.accessId}>
+                  {matchPenalty && "(" + data.shoot.shootOutScore + ") "}
+                  {data.shoot.goalTotalDisplay}
+                </p>
+              ))}
+          </div>
+
+          {matchData?.matchInfo
+            .filter((data: IUserInfo) => data.accessId !== userId)
+            .map((data: IMatchInfo) => (
+              <div
+                key={data.accessId}
+                className="flex flex-col gap-5 w-1/3 text-center"
+              >
+                <p>{data.nickname}</p>
+                {/* <p>
+                    {data.matchDetail.matchEndType === 0
+                      ? data.matchDetail.matchResult
+                      : data.matchDetail.matchEndType === 1
+                      ? "몰수승"
+                      : "몰수패"}
+                  </p> */}
+              </div>
+            ))}
         </div>
-        <p className="text-center">
-          {moment(matchData?.matchDate).format("YYYY년 MM월 DD일 HH시 mm분")}
-        </p>
+
+        <div className="flex mt-[30px]">
+          {matchData?.matchInfo
+            .filter((data: IUserInfo) => data.accessId === userId)
+            .map((data: IMatchInfo) => (
+              <div
+                key={data.accessId}
+                className="flex flex-col gap-5 w-1/3 text-center"
+              >
+                <p>{data.shoot.shootTotal}</p>
+                <p>{data.shoot.effectiveShootTotal}</p>
+                <p>
+                  {data.shoot.goalTotalDisplay &&
+                    data.shoot.effectiveShootTotal &&
+                    Math.round(
+                      (data.shoot.goalTotalDisplay /
+                        data.shoot.effectiveShootTotal) *
+                        100
+                    )}
+                </p>
+                <p>
+                  {Math.round(
+                    (data.pass.passSuccess / data.pass.passTry) * 100
+                  )}
+                </p>
+                <p>{data.matchDetail.possession}</p>
+                <p>{data.matchDetail.cornerKick}</p>
+                <p>{data.defence.tackleSuccess}</p>
+                <p>{data.matchDetail.foul}</p>
+                <p>{data.matchDetail.offsideCount}</p>
+                <p>{data.matchDetail.yellowCards}</p>
+                <p>{data.matchDetail.redCards}</p>
+                <p>{data.matchDetail.injury}</p>
+              </div>
+            ))}
+
+          <div className="flex flex-col gap-5 w-1/3 text-center">
+            <p>슛</p>
+            <p>유효슛</p>
+            <p>슛 성공률(%)</p>
+            <p>패스 성공률(%)</p>
+            <p>점유율(%)</p>
+            <p>코너킥</p>
+            <p>태클</p>
+            <p>파울</p>
+            <p>오프사이드</p>
+            <p>경고</p>
+            <p>퇴장</p>
+            <p>부상</p>
+          </div>
+
+          {matchData?.matchInfo
+            .filter((data: IUserInfo) => data.accessId !== userId)
+            .map((data: IMatchInfo) => (
+              <div
+                key={data.accessId}
+                className="flex flex-col gap-5 w-1/3 text-center"
+              >
+                <p>{data.shoot.shootTotal}</p>
+                <p>{data.shoot.effectiveShootTotal}</p>
+                <p>
+                  {data.shoot.goalTotalDisplay &&
+                    data.shoot.effectiveShootTotal &&
+                    Math.round(
+                      (data.shoot.goalTotalDisplay /
+                        data.shoot.effectiveShootTotal) *
+                        100
+                    )}
+                </p>
+                <p>
+                  {Math.round(
+                    (data.pass.passSuccess / data.pass.passTry) * 100
+                  )}
+                </p>
+                <p>{data.matchDetail.possession}</p>
+                <p>{data.matchDetail.cornerKick}</p>
+                <p>{data.defence.tackleSuccess}</p>
+                <p>{data.matchDetail.foul}</p>
+                <p>{data.matchDetail.offsideCount}</p>
+                <p>{data.matchDetail.yellowCards}</p>
+                <p>{data.matchDetail.redCards}</p>
+                <p>{data.matchDetail.injury}</p>
+              </div>
+            ))}
+        </div>
       </div>
-      <div className="flex gap-5"></div>
     </div>
   );
 }
