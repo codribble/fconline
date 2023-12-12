@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Tier from "../components/tier";
 import MatchItem from "../components/match";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import { EffectFade, Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -34,18 +34,20 @@ export interface IDivisionType {
 }
 
 export default function Users() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadedMatch, setIsLoadedMatch] = useState(false);
   const [nickname, setNickname] = useState("");
-  const [user, setUser] = useState<IUserInfo>();
+  const [user, setUser] = useState<IUserInfo | null>(null);
   const [bestTier, setBestTier] = useState<IBestTier[]>([]); // 유저의 역대 최고 등급 달성 데이터
   const [matchType, setMatchType] = useState([]); // 모든 매치 데이터
   // const [matchCategory, setMatchCategory] = useState([]); // 기록이 있는 매치 데이터
   const [divisionType, setDivisionType] = useState([]); // 모든 등급 데이터
   const [voltaDivisionType, setVoltaDivisionType] = useState([]); // 볼타 등급 데이터
   const [matchRecord, setMatchRecord] = useState<IMatchType[]>([]);
-  const headers = {
-    Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
-  };
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const swiperRef = useRef<SwiperRef>(null);
 
   useEffect(() => {
     fetch("https://static.api.nexon.co.kr/fconline/latest/matchtype.json")
@@ -59,10 +61,16 @@ export default function Users() {
     fetch("https://static.api.nexon.co.kr/fconline/latest/division_volta.json")
       .then((res) => res.json())
       .then((data) => setVoltaDivisionType(data));
+
+    inputRef.current?.focus();
   }, []);
 
   const fetchData = async () => {
     if (nickname) {
+      const headers = {
+        Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+      };
+
       try {
         const userData = await fetch(
           `https://public.api.nexon.com/openapi/fconline/v1.0/users?nickname=${nickname}`,
@@ -129,6 +137,7 @@ export default function Users() {
 
         setMatchRecord([...matchRecordData]);
         setIsLoadedMatch(true);
+        setIsLoading(false);
       } catch (error) {
         if (error instanceof Error) console.log(error.message);
       }
@@ -144,6 +153,7 @@ export default function Users() {
   return (
     <>
       <form
+        ref={formRef}
         onSubmit={onSubmit}
         className="flex items-center gap-5"
         autoComplete="off"
@@ -158,6 +168,7 @@ export default function Users() {
         </div>
         <div className="relative flex w-full">
           <input
+            ref={inputRef}
             id="nickname"
             name="nickname"
             type="text"
@@ -175,7 +186,7 @@ export default function Users() {
       </form>
 
       <div className="flex flex-col flex-wrap mt-10">
-        {user && (
+        {user && !isLoading && (
           <div className="w-full">
             <h2 className="font-bold text-[30px] text-center">
               Lv.{user.level} {user.nickname}
@@ -215,7 +226,7 @@ export default function Users() {
                   </p>
 
                   {isLoadedMatch ? (
-                    <div className="">
+                    <div>
                       <div
                         id="matchCategory"
                         role="tablist"
@@ -223,6 +234,7 @@ export default function Users() {
                       ></div>
 
                       <Swiper
+                        ref={swiperRef}
                         modules={[EffectFade, Pagination, A11y]}
                         spaceBetween={50}
                         pagination={{
@@ -246,8 +258,13 @@ export default function Users() {
                         fadeEffect={{ crossFade: true }}
                         autoHeight
                         watchSlidesProgress
+                        onInit={() => {
+                          setTimeout(() => {
+                            swiperRef.current?.swiper.update();
+                          }, 1000);
+                        }}
                       >
-                        {matchRecord.length > 0 ? (
+                        {matchRecord.length > 0 &&
                           matchRecord.map(
                             (match: IMatchType) =>
                               match.list &&
@@ -264,10 +281,7 @@ export default function Users() {
                                   </ul>
                                 </SwiperSlide>
                               )
-                          )
-                        ) : (
-                          <div>최근 매치 기록이 없습니다.</div>
-                        )}
+                          )}
                       </Swiper>
                     </div>
                   ) : (

@@ -69,6 +69,10 @@ const GlobalStyles = createGlobalStyle`
   *, *::before, *::after {
     box-sizing: border-box;
   }
+  html {
+    overflow: hidden;
+    overflow-y: scroll;
+  }
   body {
     background-color: black;
     color: white;
