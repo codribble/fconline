@@ -283,7 +283,7 @@ export default function Users() {
                       <div
                         id="matchCategory"
                         role="tablist"
-                        className="flex items-center gap-5 mb-5"
+                        className="flex items-center gap-2 mb-5"
                       ></div>
 
                       <Swiper
@@ -307,9 +307,10 @@ export default function Users() {
                           },
                           el: "#matchCategory",
                           clickable: true,
-                          bulletClass: "w-auto h-auto p-2 cursor-pointer",
+                          bulletClass:
+                            "w-auto h-auto p-2 bg-gray-600 rounded cursor-pointer",
                           bulletActiveClass:
-                            "bg-indigo-600 text-white font-bold rounded",
+                            "!bg-indigo-600 text-white font-bold",
                         }}
                         effect="fade"
                         fadeEffect={{ crossFade: true }}
