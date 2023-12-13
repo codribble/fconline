@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { IMatchData } from "./match_detail";
+import { IMatchData, IMatchInfo } from "./match_detail";
 import moment from "moment";
+import { IUserInfo } from "../routes/users";
 
 interface IMatchId {
   matchId: string;
@@ -11,6 +12,7 @@ interface IMatchId {
 export default function MatchItem({ matchId, userId }: IMatchId) {
   const navigate = useNavigate();
   const [matchData, setMatchData] = useState<IMatchData>();
+  const [myResult, setMyResult] = useState("");
 
   useEffect(() => {
     const headers = {
@@ -23,11 +25,19 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
         { headers }
       )
         .then((res) => res.json())
-        .then((data) => setMatchData(data));
+        .then((data) => {
+          setMatchData(data);
+
+          data?.matchInfo
+            .filter((data: IUserInfo) => data.accessId === userId)
+            .map((data: IMatchInfo) =>
+              setMyResult(data.matchDetail.matchResult)
+            );
+        });
     };
 
     fetchMatchData();
-  }, [matchId]);
+  }, [matchId, userId]);
 
   // console.log(matchDetail);
   // console.log(matchData?.matchInfo);
@@ -47,7 +57,7 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
         className="flex flex-col gap-2"
       >
         <div className="flex justify-between">
-          {matchData?.matchType && matchData?.matchType < 200 && (
+          {matchData && matchData?.matchType < 200 ? (
             <div className="flex items-center gap-[30px] w-2/5">
               {matchData?.matchInfo
                 .filter((data) => data.accessId === userId)
@@ -114,6 +124,64 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
                     </p>
                   </div>
                 ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-[30px] w-2/5">
+              {matchData?.matchInfo
+                .filter((data) => data.accessId === userId)
+                .map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-[10px]"
+                  >
+                    <p
+                      className={`${
+                        data.matchDetail.matchResult === "승"
+                          ? "text-indigo-600"
+                          : data.matchDetail.matchResult === "무"
+                          ? "text-yellow-600"
+                          : "text-red-600"
+                      } font-bold`}
+                    >
+                      {data.matchDetail.matchResult}
+                    </p>
+                    <p>{data.nickname}</p>
+                  </div>
+                ))}
+              <div className="flex items-center gap-[5px]">
+                <p className="text-xl font-bold">
+                  {
+                    matchData?.matchInfo
+                      .filter(
+                        (data) =>
+                          data.accessId === userId &&
+                          (data.matchDetail.matchResult === myResult ||
+                            data.matchDetail.matchResult === "무")
+                      )
+                      .reduce((a, b) =>
+                        a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
+                          ? a
+                          : b
+                      ).shoot.goalTotalDisplay
+                  }
+                </p>
+                <p>vs</p>
+                <p className="text-xl font-bold">
+                  {
+                    matchData?.matchInfo
+                      .filter(
+                        (data) =>
+                          data.matchDetail.matchResult !== myResult ||
+                          data.matchDetail.matchResult === "무"
+                      )
+                      .reduce((a, b) =>
+                        a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
+                          ? a
+                          : b
+                      ).shoot.goalTotalDisplay
+                  }
+                </p>
+              </div>
             </div>
           )}
           <p>{moment(matchData?.matchDate).format("YYYY-MM-DD HH:mm:ss")}</p>

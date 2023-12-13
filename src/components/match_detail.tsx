@@ -1,8 +1,11 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { useQuery } from "react-query";
+import { IPlayerInfo } from "../routes/players";
+import { ISeasonInfo } from "./player";
+import { IPosition } from "../routes/player_details";
 import { IUserInfo } from "../routes/users";
+import Loading from "./loading";
 
 export interface IMatchData {
   matchId: string;
@@ -19,7 +22,7 @@ export interface IMatchInfo {
   matchDetail: IMatchDetail;
   pass: IPass;
   defence: IDefence;
-  player: IPlayers;
+  player: IPlayer[];
 }
 
 export interface IMatchDetail {
@@ -100,7 +103,7 @@ export interface IDefence {
   tackleSuccess: number;
 }
 
-export interface IPlayers {
+export interface IPlayer {
   spId: number;
   spPosition: number;
   spGrade: number;
@@ -135,35 +138,40 @@ export interface IStatus {
 export default function MatchDetail() {
   const { id } = useParams();
   const { userId } = useLocation().state;
+  const [isLoading, setIsLoading] = useState(true);
+  const [allPlayers, setAllPlayers] = useState<IPlayerInfo[]>([]);
+  const [allSeason, setAllSeason] = useState<ISeasonInfo[]>([]);
+  const [allPosition, setAllPosition] = useState<IPosition[]>([]);
+  const [matchData, setMatchData] = useState<IMatchData>();
   const [matchPenalty, setMatchPenalty] = useState(false);
-
-  // react-query의 useQuery를 사용하여 데이터를 가져오고 캐시
-  const { data: matchData } = useQuery(["matchData", id], async () => {
-    const headers = {
-      Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
-    };
-
-    const response = await fetch(
-      `https://public.api.nexon.com/openapi/fconline/v1.0/matches/${id}`,
-      { headers }
-    );
-    const data = await response.json();
-
-    return data;
-  });
+  const [myResult, setMyResult] = useState("");
+  // const [our, setOur] = useState<IMatchData>();
+  // const [other, setOther] = useState<IMatchData>();
 
   useEffect(() => {
-    // matchData가 변경될 때 실행
-    if (matchData) {
-      matchData.matchInfo?.forEach((data: IMatchInfo) => {
-        if (data.shoot.shootOutScore) {
-          setMatchPenalty(true);
-        }
+    fetch("https://static.api.nexon.co.kr/fconline/latest/spid.json")
+      .then((res) => res.json())
+      .then((data) => setAllPlayers(data))
+      .catch((error) => {
+        console.error("Error fetching player data: ", error);
       });
-    }
-  }, [matchData]);
 
-  /* useEffect(() => {
+    fetch("https://static.api.nexon.co.kr/fconline/latest/seasonid.json")
+      .then((res) => res.json())
+      .then((data) => setAllSeason(data))
+      .catch((error) => {
+        console.error("Error fetching season data: ", error);
+      });
+
+    fetch("https://static.api.nexon.co.kr/fconline/latest/spposition.json")
+      .then((res) => res.json())
+      .then((data) => setAllPosition(data))
+      .catch((error) => {
+        console.error("Error fetching position data: ", error);
+      });
+  }, []);
+
+  useEffect(() => {
     const headers = {
       Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
     };
@@ -177,167 +185,428 @@ export default function MatchDetail() {
         .then((data) => {
           setMatchData(data);
 
-          data.matchInfo?.map((data: IMatchInfo) => {
-            data.shoot.shootOutScore && setMatchPenalty(true);
-          });
+          const hasPenalty = data.matchInfo.some(
+            (match: IMatchInfo) => match.shoot.shootOutScore > 0
+          );
+          setMatchPenalty(hasPenalty);
+
+          data?.matchInfo
+            .filter((info: IUserInfo) => info.accessId === userId)
+            .map((data: IMatchInfo) =>
+              setMyResult(data.matchDetail.matchResult)
+            );
+
+          /* if (data.matchType > 200) {
+            const myTeam = data.matchInfo.filter(
+              (info: IMatchInfo) => info.matchDetail.matchResult === myResult
+            );
+            console.log(myTeam);
+
+            setOur(myTeam);
+          } */
         });
     };
+
     fetchMatchData();
-  }, [id]); */
+    setIsLoading(false);
+  }, [id, userId]);
+
+  const onThumbsError = (e: React.SyntheticEvent) => {
+    if (!(e.target instanceof HTMLImageElement)) return;
+
+    const spId = e.target.dataset.spid;
+    const pId = Number(spId?.substr(3, 6));
+
+    switch (e.target.src) {
+      default:
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${spId}.png`:
+        e.target.src = `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`;
+        break;
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`:
+        e.target.src = `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${spId}.png`;
+        break;
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${spId}.png`:
+        e.target.src = `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`;
+        break;
+      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
+        e.target.src = `${import.meta.env.BASE_URL}assets/images/no_thumbs.png`;
+        break;
+    }
+  };
 
   return (
     <div>
       <h2 className="mb-[20px] text-[30px] font-bold text-center">
         경기 상세 기록
       </h2>
-      <p className="text-center">
-        {moment(matchData?.matchDate).format("YYYY년 MM월 DD일 HH시 mm분")}
-      </p>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <p className="text-center">
+            {moment(matchData?.matchDate).format("YYYY년 MM월 DD일 HH시 mm분")}
+          </p>
 
-      <div className="mt-[20px]">
-        <div className="flex justify-between">
-          {matchData?.matchInfo
-            .filter((data: IUserInfo) => data.accessId === userId)
-            .map((data: IMatchInfo) => (
-              <div
-                key={data.accessId}
-                className="flex flex-col gap-5 w-1/3 text-center"
-              >
-                <p>{data.nickname}</p>
-                {/* <p>
-                    {data.matchDetail.matchEndType === 0
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.matchEndType === 1
-                      ? "몰수승"
-                      : "몰수패"}
-                  </p> */}
-              </div>
-            ))}
+          <div className="mt-[20px]">
+            {matchData && matchData?.matchType < 200 ? (
+              <>
+                <div className="flex justify-between">
+                  {matchData?.matchInfo
+                    .filter((info) => info.accessId === userId)
+                    .map((data) => (
+                      <div
+                        key={data.accessId}
+                        className="flex flex-col gap-5 w-1/3 text-center"
+                      >
+                        <p>{data.nickname}</p>
+                      </div>
+                    ))}
 
-          <div className="flex items-center justify-center gap-5 w-1/3 text-center">
-            {matchData?.matchInfo
-              .filter((data: IUserInfo) => data.accessId === userId)
-              .map((data: IMatchInfo) => (
-                <p key={data.accessId}>
-                  {data.shoot.goalTotalDisplay}
-                  {matchPenalty && " (" + data.shoot.shootOutScore + ")"}
-                </p>
-              ))}
-            -
-            {matchData?.matchInfo
-              .filter((data: IUserInfo) => data.accessId !== userId)
-              .map((data: IMatchInfo) => (
-                <p key={data.accessId}>
-                  {matchPenalty && "(" + data.shoot.shootOutScore + ") "}
-                  {data.shoot.goalTotalDisplay}
-                </p>
-              ))}
+                  <div className="flex items-center justify-center gap-5 w-1/3 text-center">
+                    {matchData?.matchInfo
+                      .filter((info) => info.accessId === userId)
+                      .map((data) => (
+                        <p key={data.accessId}>{data.shoot.goalTotalDisplay}</p>
+                      ))}
+                    -
+                    {matchData?.matchInfo
+                      .filter((info) => info.accessId !== userId)
+                      .map((data) => (
+                        <p key={data.accessId}>{data.shoot.goalTotalDisplay}</p>
+                      ))}
+                  </div>
+
+                  {matchData?.matchInfo
+                    .filter((info) => info.accessId !== userId)
+                    .map((data) => (
+                      <div
+                        key={data.accessId}
+                        className="flex flex-col gap-5 w-1/3 text-center"
+                      >
+                        <p>{data.nickname}</p>
+                      </div>
+                    ))}
+                </div>
+
+                {matchPenalty && (
+                  <div className="flex justify-center mt-[10px]">
+                    <div className="flex items-center gap-[15px]">
+                      {matchData?.matchInfo
+                        .filter((info) => info.accessId === userId)
+                        .map((data) => (
+                          <p key={data.accessId}>{data.shoot.shootOutScore}</p>
+                        ))}
+                      <p>승부차기</p>
+                      {matchData?.matchInfo
+                        .filter((info) => info.accessId !== userId)
+                        .map((data) => (
+                          <p key={data.accessId}>{data.shoot.shootOutScore}</p>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex mt-[30px]">
+                  {matchData?.matchInfo
+                    .filter((info) => info.accessId === userId)
+                    .map((data) => (
+                      <div
+                        key={data.accessId}
+                        className="flex flex-col gap-5 w-1/3 text-center"
+                      >
+                        <p>{data.shoot.shootTotal}</p>
+                        <p>{data.shoot.effectiveShootTotal}</p>
+                        <p>
+                          {data.shoot.goalTotalDisplay &&
+                            data.shoot.effectiveShootTotal &&
+                            Math.round(
+                              (data.shoot.goalTotalDisplay /
+                                data.shoot.effectiveShootTotal) *
+                                100
+                            )}
+                        </p>
+                        <p>
+                          {Math.round(
+                            (data.pass.passSuccess / data.pass.passTry) * 100
+                          )}
+                        </p>
+                        <p>{data.matchDetail.possession}</p>
+                        <p>{data.matchDetail.cornerKick}</p>
+                        <p>{data.defence.tackleSuccess}</p>
+                        <p>{data.matchDetail.foul}</p>
+                        <p>{data.matchDetail.offsideCount}</p>
+                        <p>{data.matchDetail.yellowCards}</p>
+                        <p>{data.matchDetail.redCards}</p>
+                        <p>{data.matchDetail.injury}</p>
+                      </div>
+                    ))}
+
+                  <div className="flex flex-col gap-5 w-1/3 text-center">
+                    <p>슛</p>
+                    <p>유효슛</p>
+                    <p>슛 성공률(%)</p>
+                    <p>패스 성공률(%)</p>
+                    <p>점유율(%)</p>
+                    <p>코너킥</p>
+                    <p>태클</p>
+                    <p>파울</p>
+                    <p>오프사이드</p>
+                    <p>경고</p>
+                    <p>퇴장</p>
+                    <p>부상</p>
+                  </div>
+
+                  {matchData?.matchInfo
+                    .filter((info) => info.accessId !== userId)
+                    .map((data) => (
+                      <div
+                        key={data.accessId}
+                        className="flex flex-col gap-5 w-1/3 text-center"
+                      >
+                        <p>{data.shoot.shootTotal}</p>
+                        <p>{data.shoot.effectiveShootTotal}</p>
+                        <p>
+                          {data.shoot.goalTotalDisplay &&
+                            data.shoot.effectiveShootTotal &&
+                            Math.round(
+                              (data.shoot.goalTotalDisplay /
+                                data.shoot.effectiveShootTotal) *
+                                100
+                            )}
+                        </p>
+                        <p>
+                          {Math.round(
+                            (data.pass.passSuccess / data.pass.passTry) * 100
+                          )}
+                        </p>
+                        <p>{data.matchDetail.possession}</p>
+                        <p>{data.matchDetail.cornerKick}</p>
+                        <p>{data.defence.tackleSuccess}</p>
+                        <p>{data.matchDetail.foul}</p>
+                        <p>{data.matchDetail.offsideCount}</p>
+                        <p>{data.matchDetail.yellowCards}</p>
+                        <p>{data.matchDetail.redCards}</p>
+                        <p>{data.matchDetail.injury}</p>
+                      </div>
+                    ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex w-full">
+                  <div className="flex flex-col w-[250px] pr-[50px]">
+                    <div className="flex items-center justify-end h-1/2">
+                      <div className="relative leading-none">
+                        <span className="absolute top-0 right-0 text-[40px] font-bold -translate-y-1/2 opacity-50 -skew-x-6">
+                          OUR
+                        </span>
+                        <p className="text-[100px] font-bold -skew-x-6">
+                          {
+                            matchData?.matchInfo
+                              .filter(
+                                (info) =>
+                                  info.matchDetail.matchResult === myResult ||
+                                  info.matchDetail.matchResult === "무"
+                              )
+                              .reduce((a, b) =>
+                                a.shoot.goalTotalDisplay >
+                                b.shoot.goalTotalDisplay
+                                  ? a
+                                  : b
+                              ).shoot.goalTotalDisplay
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-end h-1/2">
+                      <div className="relative leading-none">
+                        <span className="absolute top-0 right-0 text-[40px] font-bold -translate-y-1/2 opacity-50 -skew-x-6">
+                          OTHER
+                        </span>
+                        <p className="text-[100px] font-bold -skew-x-6">
+                          {
+                            matchData?.matchInfo
+                              .filter(
+                                (info) =>
+                                  info.matchDetail.matchResult !== myResult ||
+                                  info.matchDetail.matchResult === "무"
+                              )
+                              .reduce((a, b) =>
+                                a.shoot.goalTotalDisplay >
+                                b.shoot.goalTotalDisplay
+                                  ? a
+                                  : b
+                              ).shoot.goalTotalDisplay
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex w-[calc(100%-250px)]">
+                    <div className="w-full">
+                      <div className="flex justify-end">
+                        <div className="flex">
+                          <div className="w-[120px] text-center">평점</div>
+                          <div className="w-[70px] text-center">골</div>
+                          <div className="w-[70px] text-center">유효 슛</div>
+                          <div className="w-[70px] text-center">도움</div>
+                          <div className="w-[70px] text-center">패스</div>
+                          <div className="w-[70px] text-center">드리블</div>
+                          <div className="w-[70px] text-center">태클</div>
+                          <div className="w-[70px] text-center">차단</div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-[10px]">
+                        {matchData?.matchInfo.map((data) => (
+                          <div
+                            key={data.accessId}
+                            className="flex justify-between gap-[30px]"
+                          >
+                            <div
+                              className={`${
+                                data.matchDetail.matchEndType > 1
+                                  ? "opacity-70"
+                                  : ""
+                              } flex-auto`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex flex-col gap-[5px]">
+                                  <p className="text-2xl font-semibold">
+                                    {data.nickname}
+                                  </p>
+                                  {data.player.map((p) => (
+                                    <div
+                                      key={p.spId}
+                                      className="flex items-center gap-[5px]"
+                                    >
+                                      {allSeason
+                                        .filter(
+                                          (season) =>
+                                            season.seasonId.toString() ===
+                                            p.spId.toString().substr(0, 3)
+                                        )
+                                        .map((data, i) => (
+                                          <img
+                                            key={i}
+                                            src={data.seasonImg}
+                                            width="25px"
+                                          />
+                                        ))}
+                                      {allPlayers
+                                        .filter((data) => data.id === p.spId)
+                                        .map((data) => (
+                                          <p
+                                            key={data.id}
+                                            className="text-gray-300 font-semibold"
+                                          >
+                                            {data.name}
+                                          </p>
+                                        ))}
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="flex items-center gap-[20px]">
+                                  {data.player.map((p) =>
+                                    allPlayers
+                                      .filter((data) => data.id === p.spId)
+                                      .map((data) => (
+                                        <div key={data.id}>
+                                          <img
+                                            data-spid={data.id}
+                                            src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
+                                            onError={onThumbsError}
+                                            width="80px"
+                                          />
+                                        </div>
+                                      ))
+                                  )}
+                                  {data.player.map((p) => (
+                                    <div
+                                      key={p.spId}
+                                      className="flex flex-col items-center gap-[15px]"
+                                    >
+                                      {allPosition
+                                        .filter(
+                                          (pos) =>
+                                            pos.spposition === p.spPosition
+                                        )
+                                        .map((data, i) => (
+                                          <p
+                                            key={i}
+                                            className="text-lg font-bold"
+                                          >
+                                            {data.spposition > 0
+                                              ? data.spposition >= 1 &&
+                                                data.spposition < 9
+                                                ? "DF"
+                                                : data.spposition >= 9 &&
+                                                  data.spposition < 20
+                                                ? "MF"
+                                                : "FW"
+                                              : "GK"}
+                                          </p>
+                                        ))}
+                                      <p className="text-center">
+                                        <span
+                                          className={`${
+                                            p.spGrade > 1
+                                              ? p.spGrade > 4
+                                                ? p.spGrade > 7
+                                                  ? "bg-amber-400 text-zinc-800"
+                                                  : "bg-gray-300 text-gray-600"
+                                                : "bg-yellow-700 text-zinc-900"
+                                              : "bg-zinc-700 text-white"
+                                          } px-[10px] font-bold`}
+                                        >
+                                          {p.spGrade}
+                                        </span>
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            {data.player.map((p) => (
+                              <div className="flex">
+                                <div className="self-center w-[120px] text-xl font-bold text-center">
+                                  {(
+                                    Math.floor(p.status.spRating * 10) / 10
+                                  ).toFixed(1)}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.goal}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.shoot}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.assist}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.passSuccess}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.dribbleSuccess}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.tackle}
+                                </div>
+                                <div className="self-center w-[70px] text-center">
+                                  {p.status.blockTry}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-
-          {matchData?.matchInfo
-            .filter((data: IUserInfo) => data.accessId !== userId)
-            .map((data: IMatchInfo) => (
-              <div
-                key={data.accessId}
-                className="flex flex-col gap-5 w-1/3 text-center"
-              >
-                <p>{data.nickname}</p>
-                {/* <p>
-                    {data.matchDetail.matchEndType === 0
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.matchEndType === 1
-                      ? "몰수승"
-                      : "몰수패"}
-                  </p> */}
-              </div>
-            ))}
-        </div>
-
-        <div className="flex mt-[30px]">
-          {matchData?.matchInfo
-            .filter((data: IUserInfo) => data.accessId === userId)
-            .map((data: IMatchInfo) => (
-              <div
-                key={data.accessId}
-                className="flex flex-col gap-5 w-1/3 text-center"
-              >
-                <p>{data.shoot.shootTotal}</p>
-                <p>{data.shoot.effectiveShootTotal}</p>
-                <p>
-                  {data.shoot.goalTotalDisplay &&
-                    data.shoot.effectiveShootTotal &&
-                    Math.round(
-                      (data.shoot.goalTotalDisplay /
-                        data.shoot.effectiveShootTotal) *
-                        100
-                    )}
-                </p>
-                <p>
-                  {Math.round(
-                    (data.pass.passSuccess / data.pass.passTry) * 100
-                  )}
-                </p>
-                <p>{data.matchDetail.possession}</p>
-                <p>{data.matchDetail.cornerKick}</p>
-                <p>{data.defence.tackleSuccess}</p>
-                <p>{data.matchDetail.foul}</p>
-                <p>{data.matchDetail.offsideCount}</p>
-                <p>{data.matchDetail.yellowCards}</p>
-                <p>{data.matchDetail.redCards}</p>
-                <p>{data.matchDetail.injury}</p>
-              </div>
-            ))}
-
-          <div className="flex flex-col gap-5 w-1/3 text-center">
-            <p>슛</p>
-            <p>유효슛</p>
-            <p>슛 성공률(%)</p>
-            <p>패스 성공률(%)</p>
-            <p>점유율(%)</p>
-            <p>코너킥</p>
-            <p>태클</p>
-            <p>파울</p>
-            <p>오프사이드</p>
-            <p>경고</p>
-            <p>퇴장</p>
-            <p>부상</p>
-          </div>
-
-          {matchData?.matchInfo
-            .filter((data: IUserInfo) => data.accessId !== userId)
-            .map((data: IMatchInfo) => (
-              <div
-                key={data.accessId}
-                className="flex flex-col gap-5 w-1/3 text-center"
-              >
-                <p>{data.shoot.shootTotal}</p>
-                <p>{data.shoot.effectiveShootTotal}</p>
-                <p>
-                  {data.shoot.goalTotalDisplay &&
-                    data.shoot.effectiveShootTotal &&
-                    Math.round(
-                      (data.shoot.goalTotalDisplay /
-                        data.shoot.effectiveShootTotal) *
-                        100
-                    )}
-                </p>
-                <p>
-                  {Math.round(
-                    (data.pass.passSuccess / data.pass.passTry) * 100
-                  )}
-                </p>
-                <p>{data.matchDetail.possession}</p>
-                <p>{data.matchDetail.cornerKick}</p>
-                <p>{data.defence.tackleSuccess}</p>
-                <p>{data.matchDetail.foul}</p>
-                <p>{data.matchDetail.offsideCount}</p>
-                <p>{data.matchDetail.yellowCards}</p>
-                <p>{data.matchDetail.redCards}</p>
-                <p>{data.matchDetail.injury}</p>
-              </div>
-            ))}
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }
