@@ -145,7 +145,7 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
                     >
                       {data.matchDetail.matchResult}
                     </p>
-                    <p>{data.nickname}</p>
+                    <p>우리팀</p>
                   </div>
                 ))}
               <div className="flex items-center gap-[5px]">
@@ -158,11 +158,13 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
                           (data.matchDetail.matchResult === myResult ||
                             data.matchDetail.matchResult === "무")
                       )
-                      .reduce((a, b) =>
-                        a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
-                          ? a
-                          : b
-                      ).shoot.goalTotalDisplay
+                      .reduce(
+                        (a, b) =>
+                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
+                            ? a
+                            : b,
+                        {} as IMatchInfo
+                      )?.shoot?.goalTotalDisplay
                   }
                 </p>
                 <p>vs</p>
@@ -174,14 +176,46 @@ export default function MatchItem({ matchId, userId }: IMatchId) {
                           data.matchDetail.matchResult !== myResult ||
                           data.matchDetail.matchResult === "무"
                       )
-                      .reduce((a, b) =>
-                        a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
-                          ? a
-                          : b
-                      ).shoot.goalTotalDisplay
+                      .reduce(
+                        (a, b) =>
+                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
+                            ? a
+                            : b,
+                        {} as IMatchInfo
+                      )?.shoot?.goalTotalDisplay
                   }
                 </p>
               </div>
+              {matchData?.matchInfo
+                .filter(
+                  (info) =>
+                    info.matchDetail.matchResult !== myResult ||
+                    info.matchDetail.matchResult === "무"
+                )
+                .reduce((a: React.ReactNode[], b, i) => {
+                  if (i === 0) {
+                    a.push(
+                      <div
+                        key={i}
+                        className="flex gap-[10px]"
+                      >
+                        <p>상대팀</p>
+                        <p
+                          className={`${
+                            b.matchDetail.matchResult === "승"
+                              ? "text-indigo-600"
+                              : b.matchDetail.matchResult === "무"
+                              ? "text-yellow-600"
+                              : "text-red-600"
+                          } font-bold`}
+                        >
+                          {b.matchDetail.matchResult}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return a;
+                }, [])}
             </div>
           )}
           <p>{moment(matchData?.matchDate).format("YYYY-MM-DD HH:mm:ss")}</p>
