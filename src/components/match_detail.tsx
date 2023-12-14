@@ -1,10 +1,10 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import moment from "moment";
-import { IPlayerInfo } from "../routes/players";
 import { ISeasonInfo } from "./player";
+import { IPlayerInfo } from "../routes/players";
 import { IPosition } from "../routes/player_details";
 import { IUserInfo } from "../routes/users";
+import moment from "moment";
 import Loading from "./loading";
 
 export interface IMatchData {
@@ -215,8 +215,6 @@ export default function MatchDetail() {
     fetchMatchData();
     setIsLoading(false);
   }, [id, userId]);
-
-  console.log(id, userId);
 
   const onThumbsError = (e: React.SyntheticEvent) => {
     if (!(e.target instanceof HTMLImageElement)) return;
@@ -475,16 +473,16 @@ export default function MatchDetail() {
                       </div>
                       <div className="flex flex-col gap-[5px]">
                         {matchData?.matchInfo
-                          .sort(
+                          /* .sort(
                             (a, b) =>
-                              b.matchDetail.averageRating -
-                                a.matchDetail.averageRating ||
                               a.matchDetail.matchEndType -
-                                b.matchDetail.matchEndType
+                                b.matchDetail.matchEndType ||
+                              b.matchDetail.averageRating -
+                                a.matchDetail.averageRating
                           )
                           .filter(
                             (info) => info.matchDetail.matchResult === myResult
-                          )
+                          ) */
                           .map((data) => (
                             <div
                               key={data.accessId}
