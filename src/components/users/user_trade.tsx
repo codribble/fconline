@@ -1,16 +1,31 @@
 import { useEffect, useState } from "react";
 import { IUserInfo } from "../../routes/users";
 
+export interface ITrade {
+  tradeDate: string;
+  saleSn: string;
+  spid: number;
+  grade: number;
+  value: number;
+}
+
 export default function UserTrade({ accessId }: IUserInfo) {
-  const [trade, setTrade] = useState([]);
+  const [trade, setTrade] = useState<ITrade[]>([]);
   const [tradeType, setTradeType] = useState("buy");
 
   useEffect(() => {
-    fetch(
-      `https://public.api.nexon.com/openapi/fconline/v1.0/users/${accessId}/markets?tradetype=${tradeType}`
-    )
-      .then((res) => res.json())
-      .then((data) => setTrade(data));
+    if (accessId) {
+      const headers = {
+        Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+      };
+
+      fetch(
+        `https://public.api.nexon.com/openapi/fconline/v1.0/users/${accessId}/markets?tradetype=${tradeType}`,
+        { headers }
+      )
+        .then((res) => res.json())
+        .then((data) => setTrade(data));
+    }
   }, [accessId, tradeType]);
 
   return (
@@ -46,7 +61,7 @@ export default function UserTrade({ accessId }: IUserInfo) {
         {trade && trade.length ? (
           trade.map((data) => (
             <div className="">
-              <p>{data}</p>
+              <p>{data.value}</p>
             </div>
           ))
         ) : (
