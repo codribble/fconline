@@ -47,7 +47,7 @@ export default function Players() {
   const focusRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
-    fetch("https://static.api.nexon.co.kr/fconline/latest/spid.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/spid.json")
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
@@ -56,6 +56,8 @@ export default function Players() {
       .catch((error) => {
         console.error("Error fetching player data: ", error);
       });
+
+    inputRef.current?.focus();
   }, []);
 
   const onKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {

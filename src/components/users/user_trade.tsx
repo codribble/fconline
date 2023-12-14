@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IUserInfo } from "../../routes/users";
+import Trade from "../trade";
 
 export interface ITrade {
   tradeDate: string;
@@ -9,24 +10,24 @@ export interface ITrade {
   value: number;
 }
 
-export default function UserTrade({ accessId }: IUserInfo) {
+export default function UserTrade({ ouid }: IUserInfo) {
   const [trade, setTrade] = useState<ITrade[]>([]);
   const [tradeType, setTradeType] = useState("buy");
 
   useEffect(() => {
-    if (accessId) {
+    if (ouid) {
       const headers = {
-        Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+        "x-nxopen-api-key": import.meta.env.VITE_FCONLINE_API_KEY,
       };
 
       fetch(
-        `https://public.api.nexon.com/openapi/fconline/v1.0/users/${accessId}/markets?tradetype=${tradeType}`,
+        `https://open.api.nexon.com/fconline/v1/user/trade?tradetype=${tradeType}`,
         { headers }
       )
         .then((res) => res.json())
         .then((data) => setTrade(data));
     }
-  }, [accessId, tradeType]);
+  }, [ouid, tradeType]);
 
   return (
     <div className="">
@@ -59,11 +60,7 @@ export default function UserTrade({ accessId }: IUserInfo) {
 
       <div className="flex flex-col gap-[5px]">
         {trade && trade.length ? (
-          trade.map((data) => (
-            <div className="">
-              <p>{data.value}</p>
-            </div>
-          ))
+          trade.map((data) => <Trade {...data} />)
         ) : (
           <div className="py-[30px] text-center">
             최근 2시간 이내 {tradeType === "buy" ? "구입" : "판매"} 내역이

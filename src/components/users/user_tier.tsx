@@ -22,7 +22,7 @@ export interface IDivisionType {
   divisionName: string;
 }
 
-export default function UserBestTier({ accessId }: IUserInfo) {
+export default function UserBestTier({ ouid }: IUserInfo) {
   const [bestTier, setBestTier] = useState<IBestTier[]>([]); // 유저의 역대 최고 등급 달성 데이터
   const [matchType, setMatchType] = useState<IMatchType[]>([]); // 모든 매치 데이터
   const [divisionType, setDivisionType] = useState<IDivisionType[]>([]); // 모든 등급 데이터
@@ -31,21 +31,21 @@ export default function UserBestTier({ accessId }: IUserInfo) {
   ); // 볼타 등급 데이터
 
   useEffect(() => {
-    fetch("https://static.api.nexon.co.kr/fconline/latest/matchtype.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/matchtype.json")
       .then((res) => res.json())
       .then((data) => setMatchType(data))
       .catch((error) => {
         console.error("Error fetching match type data: ", error);
       });
 
-    fetch("https://static.api.nexon.co.kr/fconline/latest/division.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/division.json")
       .then((res) => res.json())
       .then((data) => setDivisionType(data))
       .catch((error) => {
         console.error("Error fetching division data: ", error);
       });
 
-    fetch("https://static.api.nexon.co.kr/fconline/latest/division_volta.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/division-volta.json")
       .then((res) => res.json())
       .then((data) => setVoltaDivisionType(data))
       .catch((error) => {
@@ -57,16 +57,16 @@ export default function UserBestTier({ accessId }: IUserInfo) {
     // if (storageTier) {
     //   setBestTier(JSON.parse(storageTier));
     // }
-  }, [accessId]);
+  }, [ouid]);
 
   useEffect(() => {
-    if (accessId) {
+    if (ouid) {
       const headers = {
-        Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+        "x-nxopen-api-key": import.meta.env.VITE_FCONLINE_API_KEY,
       };
 
       fetch(
-        `https://public.api.nexon.com/openapi/fconline/v1.0/users/${accessId}/maxdivision`,
+        `https://open.api.nexon.com/fconline/v1/user/maxdivision?ouid=${ouid}`,
         { headers }
       )
         .then((res) => res.json())
@@ -112,49 +112,7 @@ export default function UserBestTier({ accessId }: IUserInfo) {
           console.error("Error fetching tier data: ", error);
         });
     }
-
-    /* const matchData = matchType.filter((match: IMatchType) =>
-      maxDivisionData.some(
-        (tier: IBestTier) => match.matchtype === tier.matchType
-      )
-    );
-
-    matchData.forEach((item: IMatchType, idx) => {
-      maxDivisionData[idx].desc = item.desc;
-    });
-
-    const divisionData = divisionType.filter((division: IDivisionType) =>
-      maxDivisionData.some(
-        (tier: IBestTier) => division.divisionId === tier.division
-      )
-    );
-
-    divisionData.forEach((item: IDivisionType) => {
-      maxDivisionData.filter((d: IBestTier, idx: number) => {
-        if (d.division === item.divisionId)
-          maxDivisionData[idx].tier = item.divisionName;
-      });
-    });
-
-    const voltaDivisionData = voltaDivisionType.filter(
-      (division: IDivisionType) =>
-        maxDivisionData.some(
-          (tier: IBestTier) => division.divisionId === tier.division
-        )
-    );
-
-    voltaDivisionData.forEach((item: IDivisionType) => {
-      maxDivisionData.filter((d: IBestTier, idx: number) => {
-        if (d.matchType > 200 && d.division === item.divisionId)
-          maxDivisionData[idx].tier = item.divisionName;
-      });
-    });
-
-    setBestTier(maxDivisionData);
-    sessionStorage.setItem("BestTier", JSON.stringify(maxDivisionData)); */
-  }, [accessId, divisionType, matchType, voltaDivisionType]);
-
-  console.log(bestTier);
+  }, [ouid, divisionType, matchType, voltaDivisionType]);
 
   return (
     <>

@@ -15,7 +15,7 @@ export interface IMatchData {
 }
 
 export interface IMatchInfo {
-  accessId: string;
+  ouid: string;
   nickname: string;
   shoot: IShoot;
   shootDetail: IShootDetail[];
@@ -137,9 +137,9 @@ export interface IStatus {
 
 export default function MatchDetail() {
   // const location = useLocation();
-  // const userId = location.state ? location.state.userId : null;
+  // const ouid = location.state ? location.state.ouid : null;
   const { id } = useParams();
-  const { userId } = useLocation().state;
+  const { ouid } = useLocation().state;
   const [isLoading, setIsLoading] = useState(true);
   const [allPlayers, setAllPlayers] = useState<IPlayerInfo[]>([]);
   const [allSeason, setAllSeason] = useState<ISeasonInfo[]>([]);
@@ -151,21 +151,21 @@ export default function MatchDetail() {
   // const [other, setOther] = useState<IMatchData>();
 
   useEffect(() => {
-    fetch("https://static.api.nexon.co.kr/fconline/latest/spid.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/spid.json")
       .then((res) => res.json())
       .then((data) => setAllPlayers(data))
       .catch((error) => {
         console.error("Error fetching player data: ", error);
       });
 
-    fetch("https://static.api.nexon.co.kr/fconline/latest/seasonid.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/seasonid.json")
       .then((res) => res.json())
       .then((data) => setAllSeason(data))
       .catch((error) => {
         console.error("Error fetching season data: ", error);
       });
 
-    fetch("https://static.api.nexon.co.kr/fconline/latest/spposition.json")
+    fetch("https://open.api.nexon.com/static/fconline/meta/spposition.json")
       .then((res) => res.json())
       .then((data) => setAllPosition(data))
       .catch((error) => {
@@ -174,16 +174,16 @@ export default function MatchDetail() {
   }, []);
 
   useEffect(() => {
-    console.log("userId in useEffect:", userId);
+    console.log("ouid in useEffect:", ouid);
     console.log("id in useEffect:", id);
 
     const headers = {
-      Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+      "x-nxopen-api-key": import.meta.env.VITE_FCONLINE_API_KEY,
     };
 
     const fetchMatchData = async () => {
       await fetch(
-        `https://public.api.nexon.com/openapi/fconline/v1.0/matches/${id}`,
+        `https://open.api.nexon.com/fconline/v1/match-detail?matchid=${id}`,
         { headers }
       )
         .then((res) => res.json())
@@ -196,7 +196,7 @@ export default function MatchDetail() {
           setMatchPenalty(hasPenalty);
 
           data?.matchInfo
-            .filter((info: IUserInfo) => info.accessId === userId)
+            .filter((info: IUserInfo) => info.ouid === ouid)
             .map((data: IMatchInfo) =>
               setMyResult(data.matchDetail.matchResult)
             );
@@ -214,7 +214,7 @@ export default function MatchDetail() {
 
     fetchMatchData();
     setIsLoading(false);
-  }, [id, userId]);
+  }, [id, ouid]);
 
   const onThumbsError = (e: React.SyntheticEvent) => {
     if (!(e.target instanceof HTMLImageElement)) return;
@@ -256,97 +256,104 @@ export default function MatchDetail() {
             {matchData && matchData?.matchType < 200 ? (
               <>
                 <div className="flex justify-between">
-                  {matchData?.matchInfo
-                    .filter((info) => info.accessId === userId)
-                    .map((data) => (
-                      <div
-                        key={data.accessId}
-                        className="flex flex-col gap-5 w-1/3 text-center"
-                      >
-                        <p>{data.nickname}</p>
-                      </div>
-                    ))}
+                  {matchData?.matchInfo &&
+                    matchData?.matchInfo
+                      .filter((info) => info.ouid === ouid)
+                      .map((data) => (
+                        <div
+                          key={data.ouid}
+                          className="flex flex-col gap-5 w-1/3 text-center"
+                        >
+                          <p>{data.nickname}</p>
+                        </div>
+                      ))}
 
                   <div className="flex items-center justify-center gap-5 w-1/3 text-center">
-                    {matchData?.matchInfo
-                      .filter((info) => info.accessId === userId)
-                      .map((data) => (
-                        <p key={data.accessId}>{data.shoot.goalTotalDisplay}</p>
-                      ))}
+                    {matchData?.matchInfo &&
+                      matchData?.matchInfo
+                        .filter((info) => info.ouid === ouid)
+                        .map((data) => (
+                          <p key={data.ouid}>{data.shoot.goalTotalDisplay}</p>
+                        ))}
                     -
-                    {matchData?.matchInfo
-                      .filter((info) => info.accessId !== userId)
-                      .map((data) => (
-                        <p key={data.accessId}>{data.shoot.goalTotalDisplay}</p>
-                      ))}
+                    {matchData?.matchInfo &&
+                      matchData?.matchInfo
+                        .filter((info) => info.ouid !== ouid)
+                        .map((data) => (
+                          <p key={data.ouid}>{data.shoot.goalTotalDisplay}</p>
+                        ))}
                   </div>
 
-                  {matchData?.matchInfo
-                    .filter((info) => info.accessId !== userId)
-                    .map((data) => (
-                      <div
-                        key={data.accessId}
-                        className="flex flex-col gap-5 w-1/3 text-center"
-                      >
-                        <p>{data.nickname}</p>
-                      </div>
-                    ))}
+                  {matchData?.matchInfo &&
+                    matchData?.matchInfo
+                      .filter((info) => info.ouid !== ouid)
+                      .map((data) => (
+                        <div
+                          key={data.ouid}
+                          className="flex flex-col gap-5 w-1/3 text-center"
+                        >
+                          <p>{data.nickname}</p>
+                        </div>
+                      ))}
                 </div>
 
                 {matchPenalty && (
                   <div className="flex justify-center mt-[10px]">
                     <div className="flex items-center gap-[15px]">
-                      {matchData?.matchInfo
-                        .filter((info) => info.accessId === userId)
-                        .map((data) => (
-                          <p key={data.accessId}>{data.shoot.shootOutScore}</p>
-                        ))}
+                      {matchData?.matchInfo &&
+                        matchData?.matchInfo
+                          .filter((info) => info.ouid === ouid)
+                          .map((data) => (
+                            <p key={data.ouid}>{data.shoot.shootOutScore}</p>
+                          ))}
                       <p>승부차기</p>
-                      {matchData?.matchInfo
-                        .filter((info) => info.accessId !== userId)
-                        .map((data) => (
-                          <p key={data.accessId}>{data.shoot.shootOutScore}</p>
-                        ))}
+                      {matchData?.matchInfo &&
+                        matchData?.matchInfo
+                          .filter((info) => info.ouid !== ouid)
+                          .map((data) => (
+                            <p key={data.ouid}>{data.shoot.shootOutScore}</p>
+                          ))}
                     </div>
                   </div>
                 )}
 
                 <div className="flex mt-[30px]">
-                  {matchData?.matchInfo
-                    .filter((info) => info.accessId === userId)
-                    .map((data) => (
-                      <div
-                        key={data.accessId}
-                        className="flex flex-col gap-5 w-1/3 text-center"
-                      >
-                        <p>{data.shoot.shootTotal}</p>
-                        <p>{data.shoot.effectiveShootTotal}</p>
-                        <p>
-                          {data.shoot.goalTotalDisplay &&
-                            data.shoot.shootTotal &&
-                            Math.floor(
-                              (data.shoot.goalTotalDisplay /
-                                data.shoot.shootTotal) *
-                                100
+                  {matchData?.matchInfo &&
+                    matchData?.matchInfo
+                      .filter((info) => info.ouid === ouid)
+                      .map((data) => (
+                        <div
+                          key={data.ouid}
+                          className="flex flex-col gap-5 w-1/3 text-center"
+                        >
+                          <p>{data.shoot.shootTotal}</p>
+                          <p>{data.shoot.effectiveShootTotal}</p>
+                          <p>
+                            {data.shoot.goalTotalDisplay &&
+                              data.shoot.shootTotal &&
+                              Math.floor(
+                                (data.shoot.goalTotalDisplay /
+                                  data.shoot.shootTotal) *
+                                  100
+                              )}
+                            %
+                          </p>
+                          <p>
+                            {Math.floor(
+                              (data.pass.passSuccess / data.pass.passTry) * 100
                             )}
-                          %
-                        </p>
-                        <p>
-                          {Math.floor(
-                            (data.pass.passSuccess / data.pass.passTry) * 100
-                          )}
-                          %
-                        </p>
-                        <p>{data.matchDetail.possession}%</p>
-                        <p>{data.matchDetail.cornerKick}</p>
-                        <p>{data.defence.tackleSuccess}</p>
-                        <p>{data.matchDetail.foul}</p>
-                        <p>{data.matchDetail.offsideCount}</p>
-                        <p>{data.matchDetail.yellowCards}</p>
-                        <p>{data.matchDetail.redCards}</p>
-                        <p>{data.matchDetail.injury}</p>
-                      </div>
-                    ))}
+                            %
+                          </p>
+                          <p>{data.matchDetail.possession}%</p>
+                          <p>{data.matchDetail.cornerKick}</p>
+                          <p>{data.defence.tackleSuccess}</p>
+                          <p>{data.matchDetail.foul}</p>
+                          <p>{data.matchDetail.offsideCount}</p>
+                          <p>{data.matchDetail.yellowCards}</p>
+                          <p>{data.matchDetail.redCards}</p>
+                          <p>{data.matchDetail.injury}</p>
+                        </div>
+                      ))}
 
                   <div className="flex flex-col gap-5 w-1/3 text-center">
                     <p>슛</p>
@@ -363,41 +370,42 @@ export default function MatchDetail() {
                     <p>부상</p>
                   </div>
 
-                  {matchData?.matchInfo
-                    .filter((info) => info.accessId !== userId)
-                    .map((data) => (
-                      <div
-                        key={data.accessId}
-                        className="flex flex-col gap-5 w-1/3 text-center"
-                      >
-                        <p>{data.shoot.shootTotal}</p>
-                        <p>{data.shoot.effectiveShootTotal}</p>
-                        <p>
-                          {data.shoot.goalTotalDisplay &&
-                            data.shoot.shootTotal &&
-                            Math.floor(
-                              (data.shoot.goalTotalDisplay /
-                                data.shoot.shootTotal) *
-                                100
+                  {matchData?.matchInfo &&
+                    matchData?.matchInfo
+                      .filter((info) => info.ouid !== ouid)
+                      .map((data) => (
+                        <div
+                          key={data.ouid}
+                          className="flex flex-col gap-5 w-1/3 text-center"
+                        >
+                          <p>{data.shoot.shootTotal}</p>
+                          <p>{data.shoot.effectiveShootTotal}</p>
+                          <p>
+                            {data.shoot.goalTotalDisplay &&
+                              data.shoot.shootTotal &&
+                              Math.floor(
+                                (data.shoot.goalTotalDisplay /
+                                  data.shoot.shootTotal) *
+                                  100
+                              )}
+                            %
+                          </p>
+                          <p>
+                            {Math.floor(
+                              (data.pass.passSuccess / data.pass.passTry) * 100
                             )}
-                          %
-                        </p>
-                        <p>
-                          {Math.floor(
-                            (data.pass.passSuccess / data.pass.passTry) * 100
-                          )}
-                          %
-                        </p>
-                        <p>{data.matchDetail.possession}%</p>
-                        <p>{data.matchDetail.cornerKick}</p>
-                        <p>{data.defence.tackleSuccess}</p>
-                        <p>{data.matchDetail.foul}</p>
-                        <p>{data.matchDetail.offsideCount}</p>
-                        <p>{data.matchDetail.yellowCards}</p>
-                        <p>{data.matchDetail.redCards}</p>
-                        <p>{data.matchDetail.injury}</p>
-                      </div>
-                    ))}
+                            %
+                          </p>
+                          <p>{data.matchDetail.possession}%</p>
+                          <p>{data.matchDetail.cornerKick}</p>
+                          <p>{data.defence.tackleSuccess}</p>
+                          <p>{data.matchDetail.foul}</p>
+                          <p>{data.matchDetail.offsideCount}</p>
+                          <p>{data.matchDetail.yellowCards}</p>
+                          <p>{data.matchDetail.redCards}</p>
+                          <p>{data.matchDetail.injury}</p>
+                        </div>
+                      ))}
                 </div>
               </>
             ) : (
@@ -410,7 +418,7 @@ export default function MatchDetail() {
                           OUR
                         </span>
                         <p className="text-[100px] font-bold -skew-x-6">
-                          {
+                          {matchData?.matchInfo &&
                             matchData?.matchInfo
                               .filter(
                                 (info) =>
@@ -424,8 +432,7 @@ export default function MatchDetail() {
                                     ? a
                                     : b,
                                 {} as IMatchInfo
-                              )?.shoot?.goalTotalDisplay
-                          }
+                              )?.shoot?.goalTotalDisplay}
                         </p>
                       </div>
                     </div>
@@ -435,7 +442,7 @@ export default function MatchDetail() {
                           OTHER
                         </span>
                         <p className="text-[100px] font-bold -skew-x-6">
-                          {
+                          {matchData?.matchInfo &&
                             matchData?.matchInfo
                               .filter(
                                 (info) =>
@@ -449,8 +456,7 @@ export default function MatchDetail() {
                                     ? a
                                     : b,
                                 {} as IMatchInfo
-                              )?.shoot?.goalTotalDisplay
-                          }
+                              )?.shoot?.goalTotalDisplay}
                         </p>
                       </div>
                     </div>
@@ -472,8 +478,9 @@ export default function MatchDetail() {
                         </div>
                       </div>
                       <div className="flex flex-col gap-[5px]">
-                        {matchData?.matchInfo
-                          /* .sort(
+                        {matchData?.matchInfo &&
+                          matchData?.matchInfo
+                            /* .sort(
                             (a, b) =>
                               a.matchDetail.matchEndType -
                                 b.matchDetail.matchEndType ||
@@ -483,178 +490,182 @@ export default function MatchDetail() {
                           .filter(
                             (info) => info.matchDetail.matchResult === myResult
                           ) */
-                          .map((data) => (
-                            <div
-                              key={data.accessId}
-                              className="flex justify-between gap-[5px] group"
-                            >
+                            .map((data) => (
                               <div
-                                className={`flex-auto pl-[25px] pr-[15px]${data.player.map(
-                                  (p) =>
-                                    p.spPosition > 0
-                                      ? p.spPosition >= 1 && p.spPosition < 9
-                                        ? " bg-[#1a338d]"
-                                        : p.spPosition >= 9 && p.spPosition < 20
-                                        ? " bg-[#5aaa71]"
-                                        : p.spPosition >= 20 &&
-                                          p.spPosition < 28
-                                        ? " bg-[#ee0045]"
-                                        : ""
-                                      : ""
-                                )}${
-                                  data.matchDetail.matchEndType > 1
-                                    ? " opacity-50"
-                                    : ""
-                                }`}
+                                key={data.ouid}
+                                className="flex justify-between gap-[5px] group"
                               >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex flex-col gap-[5px]">
-                                    <p className="text-2xl font-semibold">
-                                      {data.nickname}
-                                    </p>
-                                    {data.player.map((p) => (
-                                      <div
-                                        key={p.spId}
-                                        className="flex items-center gap-[5px]"
-                                      >
-                                        {allSeason
-                                          .filter(
-                                            (data) =>
-                                              data.seasonId.toString() ===
-                                              p.spId.toString().substr(0, 3)
-                                          )
-                                          .map((data, i) => (
-                                            <img
-                                              key={i}
-                                              src={data.seasonImg}
-                                              width="25px"
-                                            />
-                                          ))}
-                                        {allPlayers
+                                <div
+                                  className={`flex-auto pl-[25px] pr-[15px]${data.player.map(
+                                    (p) =>
+                                      p.spPosition > 0
+                                        ? p.spPosition >= 1 && p.spPosition < 9
+                                          ? " bg-[#1a338d]"
+                                          : p.spPosition >= 9 &&
+                                            p.spPosition < 20
+                                          ? " bg-[#5aaa71]"
+                                          : p.spPosition >= 20 &&
+                                            p.spPosition < 28
+                                          ? " bg-[#ee0045]"
+                                          : ""
+                                        : ""
+                                  )}${
+                                    data.matchDetail.matchEndType > 1
+                                      ? " opacity-50"
+                                      : ""
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex flex-col gap-[5px]">
+                                      <p className="text-2xl font-semibold">
+                                        {data.nickname}
+                                      </p>
+                                      {data.player.map((p) => (
+                                        <div
+                                          key={p.spId}
+                                          className="flex items-center gap-[5px]"
+                                        >
+                                          {allSeason
+                                            .filter(
+                                              (data) =>
+                                                data.seasonId.toString() ===
+                                                p.spId.toString().substr(0, 3)
+                                            )
+                                            .map((data, i) => (
+                                              <img
+                                                key={i}
+                                                src={data.seasonImg}
+                                                width="25px"
+                                              />
+                                            ))}
+                                          {allPlayers
+                                            .filter(
+                                              (data) => data.id === p.spId
+                                            )
+                                            .map((data) => (
+                                              <p
+                                                key={data.id}
+                                                className="text-[#bbb] font-bold"
+                                              >
+                                                {data.name}
+                                              </p>
+                                            ))}
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <div className="flex items-center gap-[20px]">
+                                      {data.player.map((p) =>
+                                        allPlayers
                                           .filter((data) => data.id === p.spId)
                                           .map((data) => (
-                                            <p
-                                              key={data.id}
-                                              className="text-[#bbb] font-bold"
+                                            <div key={data.id}>
+                                              <img
+                                                data-spid={data.id}
+                                                src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
+                                                onError={onThumbsError}
+                                                width="80px"
+                                              />
+                                            </div>
+                                          ))
+                                      )}
+                                      {data.player.map((p) => (
+                                        <div
+                                          key={p.spId}
+                                          className="flex flex-col items-center gap-[15px]"
+                                        >
+                                          {allPosition
+                                            .filter(
+                                              (pos) =>
+                                                pos.spposition === p.spPosition
+                                            )
+                                            .map((data, i) => (
+                                              <p
+                                                key={i}
+                                                className="text-lg font-bold"
+                                              >
+                                                {data.spposition > 0
+                                                  ? data.spposition >= 1 &&
+                                                    data.spposition < 9
+                                                    ? "DF"
+                                                    : data.spposition >= 9 &&
+                                                      data.spposition < 20
+                                                    ? "MF"
+                                                    : "FW"
+                                                  : "GK"}
+                                              </p>
+                                            ))}
+                                          <p className="text-center">
+                                            <span
+                                              className={`${
+                                                p.spGrade > 1
+                                                  ? p.spGrade > 4
+                                                    ? p.spGrade > 7
+                                                      ? "bg-amber-400 text-zinc-800"
+                                                      : "bg-gray-300 text-gray-600"
+                                                    : "bg-yellow-700 text-zinc-900"
+                                                  : "bg-zinc-700 text-white"
+                                              } px-[10px] font-bold`}
                                             >
-                                              {data.name}
-                                            </p>
-                                          ))}
-                                      </div>
-                                    ))}
-                                  </div>
-                                  <div className="flex items-center gap-[20px]">
-                                    {data.player.map((p) =>
-                                      allPlayers
-                                        .filter((data) => data.id === p.spId)
-                                        .map((data) => (
-                                          <div key={data.id}>
-                                            <img
-                                              data-spid={data.id}
-                                              src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
-                                              onError={onThumbsError}
-                                              width="80px"
-                                            />
-                                          </div>
-                                        ))
-                                    )}
-                                    {data.player.map((p) => (
-                                      <div
-                                        key={p.spId}
-                                        className="flex flex-col items-center gap-[15px]"
-                                      >
-                                        {allPosition
-                                          .filter(
-                                            (pos) =>
-                                              pos.spposition === p.spPosition
-                                          )
-                                          .map((data, i) => (
-                                            <p
-                                              key={i}
-                                              className="text-lg font-bold"
-                                            >
-                                              {data.spposition > 0
-                                                ? data.spposition >= 1 &&
-                                                  data.spposition < 9
-                                                  ? "DF"
-                                                  : data.spposition >= 9 &&
-                                                    data.spposition < 20
-                                                  ? "MF"
-                                                  : "FW"
-                                                : "GK"}
-                                            </p>
-                                          ))}
-                                        <p className="text-center">
-                                          <span
-                                            className={`${
-                                              p.spGrade > 1
-                                                ? p.spGrade > 4
-                                                  ? p.spGrade > 7
-                                                    ? "bg-amber-400 text-zinc-800"
-                                                    : "bg-gray-300 text-gray-600"
-                                                  : "bg-yellow-700 text-zinc-900"
-                                                : "bg-zinc-700 text-white"
-                                            } px-[10px] font-bold`}
-                                          >
-                                            {p.spGrade}
-                                          </span>
-                                        </p>
-                                      </div>
-                                    ))}
+                                              {p.spGrade}
+                                            </span>
+                                          </p>
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
+                                {data.player.map((p) => (
+                                  <div
+                                    key={p.spId}
+                                    className="flex"
+                                  >
+                                    <div className="flex w-[120px] mr-[5px] bg-white/10 text-xl font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {(
+                                          Math.floor(p.status.spRating * 10) /
+                                          10
+                                        ).toFixed(1)}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.goal}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.effectiveShoot}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.assist}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.passSuccess}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.dribbleSuccess}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.tackle}
+                                      </div>
+                                    </div>
+                                    <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                      <div className="flex items-center justify-center w-full h-full">
+                                        {p.status.blockTry}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                              {data.player.map((p) => (
-                                <div
-                                  key={p.spId}
-                                  className="flex"
-                                >
-                                  <div className="flex w-[120px] mr-[5px] bg-white/10 text-xl font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {(
-                                        Math.floor(p.status.spRating * 10) / 10
-                                      ).toFixed(1)}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.goal}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.effectiveShoot}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.assist}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.passSuccess}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.dribbleSuccess}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.tackle}
-                                    </div>
-                                  </div>
-                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                      {p.status.blockTry}
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
+                            ))}
                       </div>
                     </div>
                   </div>
