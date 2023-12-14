@@ -1,5 +1,5 @@
 import moment from "moment";
-import { IBestTier } from "../routes/users";
+import { IBestTier } from "./users/user_tier";
 
 export default function Tier({ desc, tier, achievementDate }: IBestTier) {
   return (
