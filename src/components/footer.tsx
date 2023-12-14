@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="w-full"></div>
       <p className="text-center">
         Copyright &copy; coDribble. All rights reserved. Data based on NEXON
-        DEVELOPERS.
+        Open API.
       </p>
     </footer>
   );
