@@ -7,6 +7,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 import { useLocation, useNavigate } from "react-router-dom";
+import MyTrade from "../components/users/my_trade";
 
 export interface IUserInfo {
   accessId: string;
@@ -245,9 +246,9 @@ export default function Users() {
               Lv.{user.level} {user.nickname}
             </h2>
 
-            <div className="">
+            <div className="mt-[30px]">
               {bestTier && (
-                <div className="w-full mt-[30px]">
+                <div className="">
                   <p className="block mb-[20px]">
                     <strong className="font-bold text-xl">
                       {user.nickname}
@@ -255,17 +256,7 @@ export default function Users() {
                     님의 역대 최고 등급
                   </p>
 
-                  <ul
-                    role="list"
-                    className="flex flex-wrap gap-[20px] w-full"
-                  >
-                    {bestTier.map((data: IBestTier) => (
-                      <Tier
-                        key={data.matchType}
-                        {...data}
-                      />
-                    ))}
-                  </ul>
+                  <MyBestTier {...user} />
                 </div>
               )}
 
@@ -287,9 +278,16 @@ export default function Users() {
                       ></div>
 
                       <Swiper
+                        key={matchRecord.length}
                         ref={swiperRef}
                         modules={[EffectFade, Pagination, A11y]}
                         spaceBetween={50}
+                        effect="fade"
+                        fadeEffect={{ crossFade: true }}
+                        autoHeight
+                        observer
+                        observeParents
+                        watchSlidesProgress
                         pagination={{
                           renderBullet: (_index, _class) => {
                             const category = matchRecord.filter(
@@ -312,14 +310,8 @@ export default function Users() {
                           bulletActiveClass:
                             "!bg-indigo-600 text-white font-bold",
                         }}
-                        effect="fade"
-                        fadeEffect={{ crossFade: true }}
-                        autoHeight
-                        watchSlidesProgress
                         onInit={() => {
-                          setTimeout(() => {
-                            swiperRef.current?.swiper.update();
-                          }, 1000);
+                          swiperRef.current?.swiper.update();
                         }}
                       >
                         {matchRecord.length > 0 &&
@@ -343,8 +335,26 @@ export default function Users() {
                       </Swiper>
                     </div>
                   ) : (
-                    <div className="">매치 기록 불러오는중...</div>
+                    <div className="py-[30px] text-center">
+                      매치 기록 불러오는중...
+                    </div>
                   )}
+                  {/* matchRecord
+                    .filter((record) => record.list && record.list?.length <= 0)
+                    .reduce((a: React.ReactNode[], _b, i) => {
+                      if (i === 0) {
+                        a.push(
+                          <div
+                            key={i}
+                            className="py-[30px] text-center"
+                          >
+                            최근 1개월간 기록이 없습니다.
+                          </div>
+                        );
+                      }
+
+                      return a;
+                    }, []) */}
                 </div>
               )}
 
@@ -353,6 +363,8 @@ export default function Users() {
                   <strong className="font-bold text-xl">{user.nickname}</strong>
                   님의 거래 기록
                 </p>
+
+                <MyTrade {...user} />
               </div>
             </div>
           </div>
