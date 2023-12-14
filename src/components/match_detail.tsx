@@ -136,6 +136,8 @@ export interface IStatus {
 }
 
 export default function MatchDetail() {
+  // const location = useLocation();
+  // const userId = location.state ? location.state.userId : null;
   const { id } = useParams();
   const { userId } = useLocation().state;
   const [isLoading, setIsLoading] = useState(true);
@@ -172,6 +174,9 @@ export default function MatchDetail() {
   }, []);
 
   useEffect(() => {
+    console.log("userId in useEffect:", userId);
+    console.log("id in useEffect:", id);
+
     const headers = {
       Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
     };
@@ -210,6 +215,8 @@ export default function MatchDetail() {
     fetchMatchData();
     setIsLoading(false);
   }, [id, userId]);
+
+  console.log(id, userId);
 
   const onThumbsError = (e: React.SyntheticEvent) => {
     if (!(e.target instanceof HTMLImageElement)) return;
@@ -318,19 +325,21 @@ export default function MatchDetail() {
                         <p>{data.shoot.effectiveShootTotal}</p>
                         <p>
                           {data.shoot.goalTotalDisplay &&
-                            data.shoot.effectiveShootTotal &&
-                            Math.round(
+                            data.shoot.shootTotal &&
+                            Math.floor(
                               (data.shoot.goalTotalDisplay /
-                                data.shoot.effectiveShootTotal) *
+                                data.shoot.shootTotal) *
                                 100
                             )}
+                          %
                         </p>
                         <p>
-                          {Math.round(
+                          {Math.floor(
                             (data.pass.passSuccess / data.pass.passTry) * 100
                           )}
+                          %
                         </p>
-                        <p>{data.matchDetail.possession}</p>
+                        <p>{data.matchDetail.possession}%</p>
                         <p>{data.matchDetail.cornerKick}</p>
                         <p>{data.defence.tackleSuccess}</p>
                         <p>{data.matchDetail.foul}</p>
@@ -367,19 +376,21 @@ export default function MatchDetail() {
                         <p>{data.shoot.effectiveShootTotal}</p>
                         <p>
                           {data.shoot.goalTotalDisplay &&
-                            data.shoot.effectiveShootTotal &&
-                            Math.round(
+                            data.shoot.shootTotal &&
+                            Math.floor(
                               (data.shoot.goalTotalDisplay /
-                                data.shoot.effectiveShootTotal) *
+                                data.shoot.shootTotal) *
                                 100
                             )}
+                          %
                         </p>
                         <p>
-                          {Math.round(
+                          {Math.floor(
                             (data.pass.passSuccess / data.pass.passTry) * 100
                           )}
+                          %
                         </p>
-                        <p>{data.matchDetail.possession}</p>
+                        <p>{data.matchDetail.possession}%</p>
                         <p>{data.matchDetail.cornerKick}</p>
                         <p>{data.defence.tackleSuccess}</p>
                         <p>{data.matchDetail.foul}</p>
@@ -397,7 +408,7 @@ export default function MatchDetail() {
                   <div className="flex flex-col w-[250px] pr-[50px]">
                     <div className="flex items-center justify-end h-1/2">
                       <div className="relative leading-none">
-                        <span className="absolute top-0 right-0 text-[40px] font-bold -translate-y-1/2 opacity-50 -skew-x-6">
+                        <span className="absolute top-0 right-0 text-[40px] font-bold -translate-y-1/2 opacity-30 -skew-x-6">
                           OUR
                         </span>
                         <p className="text-[100px] font-bold -skew-x-6">
@@ -408,19 +419,21 @@ export default function MatchDetail() {
                                   info.matchDetail.matchResult === myResult ||
                                   info.matchDetail.matchResult === "무"
                               )
-                              .reduce((a, b) =>
-                                a.shoot.goalTotalDisplay >
-                                b.shoot.goalTotalDisplay
-                                  ? a
-                                  : b
-                              ).shoot.goalTotalDisplay
+                              .reduce(
+                                (a, b) =>
+                                  a.shoot?.goalTotalDisplay >
+                                  b.shoot?.goalTotalDisplay
+                                    ? a
+                                    : b,
+                                {} as IMatchInfo
+                              )?.shoot?.goalTotalDisplay
                           }
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center justify-end h-1/2">
                       <div className="relative leading-none">
-                        <span className="absolute top-0 right-0 text-[40px] font-bold -translate-y-1/2 opacity-50 -skew-x-6">
+                        <span className="absolute top-0 right-0 text-[40px] font-bold -translate-y-1/2 opacity-30 -skew-x-6">
                           OTHER
                         </span>
                         <p className="text-[100px] font-bold -skew-x-6">
@@ -431,12 +444,14 @@ export default function MatchDetail() {
                                   info.matchDetail.matchResult !== myResult ||
                                   info.matchDetail.matchResult === "무"
                               )
-                              .reduce((a, b) =>
-                                a.shoot.goalTotalDisplay >
-                                b.shoot.goalTotalDisplay
-                                  ? a
-                                  : b
-                              ).shoot.goalTotalDisplay
+                              .reduce(
+                                (a, b) =>
+                                  a.shoot?.goalTotalDisplay >
+                                  b.shoot?.goalTotalDisplay
+                                    ? a
+                                    : b,
+                                {} as IMatchInfo
+                              )?.shoot?.goalTotalDisplay
                           }
                         </p>
                       </div>
@@ -445,8 +460,10 @@ export default function MatchDetail() {
                   <div className="flex w-[calc(100%-250px)]">
                     <div className="w-full">
                       <div className="flex justify-end">
-                        <div className="flex">
-                          <div className="w-[120px] text-center">평점</div>
+                        <div className="flex py-[10px] text-[#aaa]">
+                          <div className="w-[120px] mr-[5px] text-center">
+                            평점
+                          </div>
                           <div className="w-[70px] text-center">골</div>
                           <div className="w-[70px] text-center">유효 슛</div>
                           <div className="w-[70px] text-center">도움</div>
@@ -456,148 +473,190 @@ export default function MatchDetail() {
                           <div className="w-[70px] text-center">차단</div>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-[10px]">
-                        {matchData?.matchInfo.map((data) => (
-                          <div
-                            key={data.accessId}
-                            className="flex justify-between gap-[30px]"
-                          >
+                      <div className="flex flex-col gap-[5px]">
+                        {matchData?.matchInfo
+                          .sort(
+                            (a, b) =>
+                              b.matchDetail.averageRating -
+                                a.matchDetail.averageRating ||
+                              a.matchDetail.matchEndType -
+                                b.matchDetail.matchEndType
+                          )
+                          .filter(
+                            (info) => info.matchDetail.matchResult === myResult
+                          )
+                          .map((data) => (
                             <div
-                              className={`${
-                                data.matchDetail.matchEndType > 1
-                                  ? "opacity-70"
-                                  : ""
-                              } flex-auto`}
+                              key={data.accessId}
+                              className="flex justify-between gap-[5px] group"
                             >
-                              <div className="flex items-center justify-between">
-                                <div className="flex flex-col gap-[5px]">
-                                  <p className="text-2xl font-semibold">
-                                    {data.nickname}
-                                  </p>
-                                  {data.player.map((p) => (
-                                    <div
-                                      key={p.spId}
-                                      className="flex items-center gap-[5px]"
-                                    >
-                                      {allSeason
-                                        .filter(
-                                          (season) =>
-                                            season.seasonId.toString() ===
-                                            p.spId.toString().substr(0, 3)
-                                        )
-                                        .map((data, i) => (
-                                          <img
-                                            key={i}
-                                            src={data.seasonImg}
-                                            width="25px"
-                                          />
-                                        ))}
-                                      {allPlayers
+                              <div
+                                className={`flex-auto pl-[25px] pr-[15px]${data.player.map(
+                                  (p) =>
+                                    p.spPosition > 0
+                                      ? p.spPosition >= 1 && p.spPosition < 9
+                                        ? " bg-[#1a338d]"
+                                        : p.spPosition >= 9 && p.spPosition < 20
+                                        ? " bg-[#5aaa71]"
+                                        : p.spPosition >= 20 &&
+                                          p.spPosition < 28
+                                        ? " bg-[#ee0045]"
+                                        : ""
+                                      : ""
+                                )}${
+                                  data.matchDetail.matchEndType > 1
+                                    ? " opacity-50"
+                                    : ""
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex flex-col gap-[5px]">
+                                    <p className="text-2xl font-semibold">
+                                      {data.nickname}
+                                    </p>
+                                    {data.player.map((p) => (
+                                      <div
+                                        key={p.spId}
+                                        className="flex items-center gap-[5px]"
+                                      >
+                                        {allSeason
+                                          .filter(
+                                            (data) =>
+                                              data.seasonId.toString() ===
+                                              p.spId.toString().substr(0, 3)
+                                          )
+                                          .map((data, i) => (
+                                            <img
+                                              key={i}
+                                              src={data.seasonImg}
+                                              width="25px"
+                                            />
+                                          ))}
+                                        {allPlayers
+                                          .filter((data) => data.id === p.spId)
+                                          .map((data) => (
+                                            <p
+                                              key={data.id}
+                                              className="text-[#bbb] font-bold"
+                                            >
+                                              {data.name}
+                                            </p>
+                                          ))}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div className="flex items-center gap-[20px]">
+                                    {data.player.map((p) =>
+                                      allPlayers
                                         .filter((data) => data.id === p.spId)
                                         .map((data) => (
-                                          <p
-                                            key={data.id}
-                                            className="text-gray-300 font-semibold"
+                                          <div key={data.id}>
+                                            <img
+                                              data-spid={data.id}
+                                              src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
+                                              onError={onThumbsError}
+                                              width="80px"
+                                            />
+                                          </div>
+                                        ))
+                                    )}
+                                    {data.player.map((p) => (
+                                      <div
+                                        key={p.spId}
+                                        className="flex flex-col items-center gap-[15px]"
+                                      >
+                                        {allPosition
+                                          .filter(
+                                            (pos) =>
+                                              pos.spposition === p.spPosition
+                                          )
+                                          .map((data, i) => (
+                                            <p
+                                              key={i}
+                                              className="text-lg font-bold"
+                                            >
+                                              {data.spposition > 0
+                                                ? data.spposition >= 1 &&
+                                                  data.spposition < 9
+                                                  ? "DF"
+                                                  : data.spposition >= 9 &&
+                                                    data.spposition < 20
+                                                  ? "MF"
+                                                  : "FW"
+                                                : "GK"}
+                                            </p>
+                                          ))}
+                                        <p className="text-center">
+                                          <span
+                                            className={`${
+                                              p.spGrade > 1
+                                                ? p.spGrade > 4
+                                                  ? p.spGrade > 7
+                                                    ? "bg-amber-400 text-zinc-800"
+                                                    : "bg-gray-300 text-gray-600"
+                                                  : "bg-yellow-700 text-zinc-900"
+                                                : "bg-zinc-700 text-white"
+                                            } px-[10px] font-bold`}
                                           >
-                                            {data.name}
-                                          </p>
-                                        ))}
-                                    </div>
-                                  ))}
-                                </div>
-                                <div className="flex items-center gap-[20px]">
-                                  {data.player.map((p) =>
-                                    allPlayers
-                                      .filter((data) => data.id === p.spId)
-                                      .map((data) => (
-                                        <div key={data.id}>
-                                          <img
-                                            data-spid={data.id}
-                                            src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
-                                            onError={onThumbsError}
-                                            width="80px"
-                                          />
-                                        </div>
-                                      ))
-                                  )}
-                                  {data.player.map((p) => (
-                                    <div
-                                      key={p.spId}
-                                      className="flex flex-col items-center gap-[15px]"
-                                    >
-                                      {allPosition
-                                        .filter(
-                                          (pos) =>
-                                            pos.spposition === p.spPosition
-                                        )
-                                        .map((data, i) => (
-                                          <p
-                                            key={i}
-                                            className="text-lg font-bold"
-                                          >
-                                            {data.spposition > 0
-                                              ? data.spposition >= 1 &&
-                                                data.spposition < 9
-                                                ? "DF"
-                                                : data.spposition >= 9 &&
-                                                  data.spposition < 20
-                                                ? "MF"
-                                                : "FW"
-                                              : "GK"}
-                                          </p>
-                                        ))}
-                                      <p className="text-center">
-                                        <span
-                                          className={`${
-                                            p.spGrade > 1
-                                              ? p.spGrade > 4
-                                                ? p.spGrade > 7
-                                                  ? "bg-amber-400 text-zinc-800"
-                                                  : "bg-gray-300 text-gray-600"
-                                                : "bg-yellow-700 text-zinc-900"
-                                              : "bg-zinc-700 text-white"
-                                          } px-[10px] font-bold`}
-                                        >
-                                          {p.spGrade}
-                                        </span>
-                                      </p>
-                                    </div>
-                                  ))}
+                                            {p.spGrade}
+                                          </span>
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
+                              {data.player.map((p) => (
+                                <div
+                                  key={p.spId}
+                                  className="flex"
+                                >
+                                  <div className="flex w-[120px] mr-[5px] bg-white/10 text-xl font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {(
+                                        Math.floor(p.status.spRating * 10) / 10
+                                      ).toFixed(1)}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.goal}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.effectiveShoot}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.assist}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.passSuccess}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.dribbleSuccess}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.tackle}
+                                    </div>
+                                  </div>
+                                  <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                      {p.status.blockTry}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                            {data.player.map((p) => (
-                              <div className="flex">
-                                <div className="self-center w-[120px] text-xl font-bold text-center">
-                                  {(
-                                    Math.floor(p.status.spRating * 10) / 10
-                                  ).toFixed(1)}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.goal}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.shoot}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.assist}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.passSuccess}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.dribbleSuccess}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.tackle}
-                                </div>
-                                <div className="self-center w-[70px] text-center">
-                                  {p.status.blockTry}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     </div>
                   </div>
