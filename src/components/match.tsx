@@ -20,7 +20,31 @@ export default function MatchItem({ matchId, ouid }: IMatchId) {
     };
 
     const fetchMatchData = async () => {
-      await fetch(
+      try {
+        const response = await fetch(
+          `https://open.api.nexon.com/fconline/v1/match-detail?matchid=${matchId}`,
+          { headers }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setMatchData(data);
+
+          data.matchInfo
+            .filter((data: IUserInfo) => data.ouid === ouid)
+            .map((data: IMatchInfo) =>
+              setMyResult(data.matchDetail.matchResult)
+            );
+        } else {
+          console.error(
+            `Failed to fetch match data. Status: ${response.status}`
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching match data:", error);
+      }
+
+      /* await fetch(
         `https://open.api.nexon.com/fconline/v1/match-detail?matchid=${matchId}`,
         { headers }
       )
@@ -28,13 +52,12 @@ export default function MatchItem({ matchId, ouid }: IMatchId) {
         .then((data) => {
           setMatchData(data);
 
-          data &&
-            data?.matchInfo
-              .filter((data: IUserInfo) => data.ouid === ouid)
-              .map((data: IMatchInfo) =>
-                setMyResult(data.matchDetail.matchResult)
-              );
-        });
+          data?.matchInfo
+            ?.filter((data: IUserInfo) => data.ouid === ouid)
+            .map((data: IMatchInfo) =>
+              setMyResult(data.matchDetail.matchResult)
+            );
+        }); */
     };
 
     fetchMatchData();
@@ -44,8 +67,8 @@ export default function MatchItem({ matchId, ouid }: IMatchId) {
   // console.log(matchData?.matchInfo);
 
   return (
-    <li className="w-full">
-      {matchData && (
+    matchData && (
+      <li className="w-full">
         <Link
           to={`/match/${matchId}`}
           onClick={(e) => {
@@ -245,7 +268,7 @@ export default function MatchItem({ matchId, ouid }: IMatchId) {
           ) */}
           </div>
         </Link>
-      )}
-    </li>
+      </li>
+    )
   );
 }
