@@ -287,7 +287,7 @@ export default function Players() {
         </ul>
 
         <Pagination
-          total={searchPlayers.length}
+          total={searchPlayers.length ? searchPlayers.length : players.length}
           limit={limit}
           page={page}
           setPage={setPage}
