@@ -57,17 +57,9 @@ export default function Player({ id, name }: IPlayerInfo) {
   }; */
 
   useEffect(() => {
-    const seasonData = async () => {
-      const data = await fetch(
-        "https://static.api.nexon.co.kr/fconline/latest/seasonid.json"
-      )
-        .then((res) => res.json())
-        .then((data) => data);
-
-      setSeasons(data);
-    };
-
-    seasonData();
+    fetch("https://open.api.nexon.com/static/fconline/meta/seasonid.json")
+      .then((res) => res.json())
+      .then((data) => setSeasons(data));
   }, []);
 
   useEffect(() => {
@@ -75,6 +67,8 @@ export default function Player({ id, name }: IPlayerInfo) {
       if (data.seasonId.toString() === seasonId.toString()) setSeason(data);
     });
   }, [seasonId, seasons]);
+
+  console.log(seasons);
 
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
