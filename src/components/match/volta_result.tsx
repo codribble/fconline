@@ -167,7 +167,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               : ""
                           }`}
                         >
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between h-full">
                             <div className="flex flex-col gap-[5px]">
                               <p className="text-2xl font-semibold">
                                 {data.nickname}
@@ -221,7 +221,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               {data.player.map((p) => (
                                 <div
                                   key={p.spId}
-                                  className="flex flex-col items-center gap-[15px]"
+                                  className="flex flex-col items-center gap-[10px]"
                                 >
                                   {allPosition
                                     .filter(
@@ -351,7 +351,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               : ""
                           }`}
                         >
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between h-full">
                             <div className="flex flex-col gap-[5px]">
                               <p className="text-2xl font-semibold">
                                 {data.nickname}
@@ -405,7 +405,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               {data.player.map((p) => (
                                 <div
                                   key={p.spId}
-                                  className="flex flex-col items-center gap-[15px]"
+                                  className="flex flex-col items-center gap-[10px]"
                                 >
                                   {allPosition
                                     .filter(
