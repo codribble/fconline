@@ -1,26 +1,22 @@
 import { useEffect, /* useRef, */ useState } from "react";
 import { IUserInfo } from "../../routes/users";
+import MatchItem from "../match";
 // import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 // import { EffectFade, Pagination, A11y } from "swiper/modules";
 // import "swiper/css";
 // import "swiper/css/effect-fade";
 // import "swiper/css/pagination";
-import MatchItem from "../match";
 
 export interface IMatchType {
   matchtype: number;
   desc: string;
 }
 
-export interface IMatchList {
-  matchId: string;
-}
-
 export default function MatchList({ ouid }: IUserInfo) {
   const [isLoadedMatch, setIsLoadedMatch] = useState(false);
   const [matchType, setMatchType] = useState<IMatchType[]>([]); // 모든 매치 데이터
   const [selectedType, setSelectedType] = useState(0);
-  const [matchRecord, setMatchRecord] = useState<IMatchList[]>([]);
+  const [matchRecord, setMatchRecord] = useState([]);
   // const swiperRef = useRef<SwiperRef>(null);
 
   useEffect(() => {
@@ -39,16 +35,19 @@ export default function MatchList({ ouid }: IUserInfo) {
       "x-nxopen-api-key": import.meta.env.VITE_FCONLINE_API_KEY,
     };
 
-    fetch(
-      `https://open.api.nexon.com/fconline/v1/user/match?ouid=${ouid}&matchtype=${selectedType}`,
-      { headers }
-    )
-      .then((res) => res.json())
-      .then((data) => setMatchRecord(data))
-      .catch((error) =>
-        console.error("매치 데이터를 불러오는 중 오류가 발생했습니다.", error)
-      );
+    const matchRecordData = async () => {
+      await fetch(
+        `https://open.api.nexon.com/fconline/v1/user/match?ouid=${ouid}&matchtype=${selectedType}`,
+        { headers }
+      )
+        .then((res) => res.json())
+        .then((data) => setMatchRecord(data))
+        .catch((error) =>
+          console.error("매치 데이터를 불러오는 중 오류가 발생했습니다.", error)
+        );
+    };
 
+    matchRecordData();
     setIsLoadedMatch(true);
   }, [ouid, selectedType]);
 
