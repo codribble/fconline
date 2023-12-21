@@ -183,7 +183,7 @@ export default function MatchDetail() {
         <>
           <p className="text-center">
             {moment(
-              moment.utc(moment.utc(matchData?.matchDate).format()).toDate()
+              moment.utc(moment.utc(matchData?.matchDate)).toDate()
             ).format("YYYY년 MM월 DD일 HH시 mm분")}
           </p>
 
