@@ -18,7 +18,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
 
   return (
     <>
-      <div className="flex items-center justify-between w-1/3 mx-auto mb-[50px] text-[100px] text-center">
+      <div className="flex items-end justify-between w-1/3 mx-auto mb-[50px] text-[100px] text-center">
         {matchData.matchInfo &&
           matchData.matchInfo
             .filter((info) => info.ouid === ouid)
@@ -30,7 +30,38 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                 {data.shoot.goalTotalDisplay}
               </p>
             ))}
-        <p className="text-gray-400">-</p>
+        {matchPenalty &&
+          matchData.matchInfo &&
+          matchData.matchInfo
+            .filter((info) => info.ouid === ouid)
+            .map((data) => (
+              <p
+                key={data.ouid}
+                className="self-end text-2xl font-bold"
+              >
+                {data.shoot.shootOutScore}
+              </p>
+            ))}
+        <div>
+          <p className="text-gray-400">-</p>
+          {matchPenalty && (
+            <p className="-mt-[20px] text-sm font-bold text-gray-400">
+              승부차기
+            </p>
+          )}
+        </div>
+        {matchPenalty &&
+          matchData.matchInfo &&
+          matchData.matchInfo
+            .filter((info) => info.ouid !== ouid)
+            .map((data) => (
+              <p
+                key={data.ouid}
+                className="self-end text-2xl font-bold"
+              >
+                {data.shoot.shootOutScore}
+              </p>
+            ))}
         {matchData.matchInfo &&
           matchData.matchInfo
             .filter((info) => info.ouid !== ouid)
@@ -44,26 +75,6 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             ))}
       </div>
 
-      {matchPenalty && (
-        <div className="flex justify-center mt-[10px]">
-          <div className="flex items-center gap-[15px]">
-            {matchData.matchInfo &&
-              matchData.matchInfo
-                .filter((info) => info.ouid === ouid)
-                .map((data) => (
-                  <p key={data.ouid}>{data.shoot.shootOutScore}</p>
-                ))}
-            <p>승부차기</p>
-            {matchData.matchInfo &&
-              matchData.matchInfo
-                .filter((info) => info.ouid !== ouid)
-                .map((data) => (
-                  <p key={data.ouid}>{data.shoot.shootOutScore}</p>
-                ))}
-          </div>
-        </div>
-      )}
-
       <div className="flex justify-between">
         {matchData.matchInfo &&
           matchData.matchInfo
@@ -73,7 +84,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                 key={data.ouid}
                 className="flex items-center justify-center gap-5 w-1/4 text-center"
               >
-                <p className="text-[30px] font-bold">{data.nickname}</p>
+                <p className="text-[25px] font-bold">{data.nickname}</p>
               </div>
             ))}
         <div className="flex w-1/3">
@@ -92,12 +103,9 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                     {data.shoot.effectiveShootTotal}
                   </p>
                   <p className="py-[15px] border-b border-solid border-white/20">
-                    {data.shoot.goalTotalDisplay &&
-                      data.shoot.shootTotal &&
-                      Math.floor(
-                        (data.shoot.goalTotalDisplay / data.shoot.shootTotal) *
-                          100
-                      )}
+                    {Math.floor(
+                      (data.shoot.goalTotal / data.shoot.shootTotal) * 100
+                    )}
                     %
                   </p>
                   <p className="py-[15px] border-b border-solid border-white/20">
@@ -127,13 +135,11 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                   <p className="py-[15px] border-b border-solid border-white/20">
                     {data.matchDetail.redCards}
                   </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {data.matchDetail.injury}
-                  </p>
+                  <p className="py-[15px]">{data.matchDetail.injury}</p>
                 </div>
               ))}
 
-          <div className="flex flex-col flex-auto text-center">
+          <div className="flex flex-col flex-auto text-gray-400 text-center">
             <p className="py-[15px] border-b border-solid border-white/20">
               슛
             </p>
@@ -167,9 +173,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             <p className="py-[15px] border-b border-solid border-white/20">
               퇴장
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
-              부상
-            </p>
+            <p className="py-[15px]">부상</p>
           </div>
 
           {matchData.matchInfo &&
@@ -187,12 +191,9 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                     {data.shoot.effectiveShootTotal}
                   </p>
                   <p className="py-[15px] border-b border-solid border-white/20">
-                    {data.shoot.goalTotalDisplay &&
-                      data.shoot.shootTotal &&
-                      Math.floor(
-                        (data.shoot.goalTotalDisplay / data.shoot.shootTotal) *
-                          100
-                      )}
+                    {Math.floor(
+                      (data.shoot.goalTotal / data.shoot.shootTotal) * 100
+                    )}
                     %
                   </p>
                   <p className="py-[15px] border-b border-solid border-white/20">
@@ -222,9 +223,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                   <p className="py-[15px] border-b border-solid border-white/20">
                     {data.matchDetail.redCards}
                   </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {data.matchDetail.injury}
-                  </p>
+                  <p className="py-[15px]">{data.matchDetail.injury}</p>
                 </div>
               ))}
         </div>
@@ -236,7 +235,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                 key={data.ouid}
                 className="flex items-center justify-center gap-5 w-1/4 text-center"
               >
-                <p className="text-[30px] font-bold">{data.nickname}</p>
+                <p className="text-[25px] font-bold">{data.nickname}</p>
               </div>
             ))}
       </div>
