@@ -1,9 +1,9 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import moment from "moment";
 import Loading from "./loading";
 import MatchResult from "./match/match_result";
 import VoltaResult from "./match/volta_result";
+import moment from "moment";
 
 export interface IMatchData {
   matchId: string;
@@ -182,7 +182,9 @@ export default function MatchDetail() {
       ) : (
         <>
           <p className="text-center">
-            {moment(matchData?.matchDate).format("YYYY년 MM월 DD일 HH시 mm분")}
+            {moment(matchData?.matchDate)
+              .add(9, "h")
+              .format("YYYY년 MM월 DD일 HH시 mm분")}
           </p>
 
           <div className="mt-[20px]">

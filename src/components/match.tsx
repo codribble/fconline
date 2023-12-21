@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IMatchData, IMatchInfo } from "./match_detail";
-import moment from "moment";
 import { IUserInfo } from "../routes/users";
+import moment from "moment";
 
-interface IMatchId {
+export interface IMatchItem {
   matchId: string;
   ouid: string;
 }
 
-export default function MatchItem({ matchId, ouid }: IMatchId) {
+export default function MatchItem({ matchId, ouid }: IMatchItem) {
   const navigate = useNavigate();
   const [matchData, setMatchData] = useState<IMatchData>();
   const [myResult, setMyResult] = useState("");
@@ -249,7 +249,11 @@ export default function MatchItem({ matchId, ouid }: IMatchId) {
                     }, [])}
               </div>
             )}
-            <p>{moment(matchData?.matchDate).format("YYYY-MM-DD HH:mm:ss")}</p>
+            <p>
+              {moment(matchData?.matchDate)
+                .add(9, "h")
+                .format("YYYY-MM-DD HH:mm:ss")}
+            </p>
             {/* matchData?.matchInfo.map(
             (data) =>
               data.ouid === ouid && (
