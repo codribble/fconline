@@ -182,9 +182,9 @@ export default function MatchDetail() {
       ) : (
         <>
           <p className="text-center">
-            {moment(matchData?.matchDate)
-              .add(9, "h")
-              .format("YYYY년 MM월 DD일 HH시 mm분")}
+            {moment(
+              moment.utc(moment.utc(matchData?.matchDate).format()).toDate()
+            ).format("YYYY년 MM월 DD일 HH시 mm분")}
           </p>
 
           <div className="mt-[20px]">

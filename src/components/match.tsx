@@ -250,9 +250,9 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
               </div>
             )}
             <p>
-              {moment(matchData?.matchDate)
-                .add(9, "h")
-                .format("YYYY-MM-DD HH:mm:ss")}
+              {moment(
+                moment.utc(moment.utc(matchData?.matchDate).format()).toDate()
+              ).format("YYYY-MM-DD HH:mm:ss")}
             </p>
             {/* matchData?.matchInfo.map(
             (data) =>
