@@ -34,7 +34,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
       });
   }, []);
 
-  console.log(allPlayers);
+  // console.log(allPlayers);
 
   useEffect(() => {
     matchData.matchInfo
@@ -147,7 +147,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                     .map((data) => (
                       <div
                         key={data.ouid}
-                        className="flex justify-between gap-[5px] group"
+                        className="flex justify-between gap-[5px] min-h-[80px] group"
                       >
                         <div
                           className={`flex-auto pl-[25px] pr-[15px]${data.player.map(
@@ -331,7 +331,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                     .map((data) => (
                       <div
                         key={data.ouid}
-                        className="flex justify-between gap-[5px] group"
+                        className="flex justify-between gap-[5px] min-h-[80px] group"
                       >
                         <div
                           className={`flex-auto pl-[25px] pr-[15px]${data.player.map(
