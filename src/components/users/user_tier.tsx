@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IUserInfo } from "../../routes/users";
+import { IMatchType, IUserInfo } from "../../routes/users";
 import Tier from "../tier";
 
 export interface IBestTier {
@@ -8,13 +8,6 @@ export interface IBestTier {
   achievementDate: string;
   desc: string;
   tier: string;
-}
-
-export interface IMatchType {
-  matchtype: number;
-  desc: string;
-  type?: number;
-  list?: string[];
 }
 
 export interface IDivisionType {
@@ -51,12 +44,6 @@ export default function UserBestTier({ ouid }: IUserInfo) {
       .catch((error) => {
         console.error("Error fetching volta division data: ", error);
       });
-
-    // const storageTier = sessionStorage.getItem("BestTier");
-
-    // if (storageTier) {
-    //   setBestTier(JSON.parse(storageTier));
-    // }
   }, [ouid]);
 
   useEffect(() => {
@@ -120,12 +107,13 @@ export default function UserBestTier({ ouid }: IUserInfo) {
         role="list"
         className="flex flex-wrap gap-[20px] w-full"
       >
-        {bestTier.map((data: IBestTier) => (
-          <Tier
-            key={data.matchType}
-            {...data}
-          />
-        ))}
+        {bestTier &&
+          bestTier.map((data) => (
+            <Tier
+              key={data.matchType}
+              {...data}
+            />
+          ))}
       </ul>
     </>
   );

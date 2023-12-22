@@ -12,23 +12,27 @@ export interface IMatchType {
   desc: string;
 }
 
-export default function MatchList({ ouid }: IUserInfo) {
+export default function UserMatchList({ ouid }: IUserInfo) {
   const [isLoadedMatch, setIsLoadedMatch] = useState(false);
   const [matchType, setMatchType] = useState<IMatchType[]>([]); // 모든 매치 데이터
-  const [selectedType, setSelectedType] = useState(0);
+  const [selectedType, setSelectedType] = useState<number>();
   const [matchRecord, setMatchRecord] = useState([]);
   // const swiperRef = useRef<SwiperRef>(null);
 
   useEffect(() => {
+    const storageType = sessionStorage.getItem("SelectedMatchType");
+
     fetch("https://open.api.nexon.com/static/fconline/meta/matchtype.json")
       .then((res) => res.json())
       .then((data) => {
         data.map((match: IMatchType, i: number) => {
-          if (i === 0) setSelectedType(match.matchtype);
+          storageType
+            ? setSelectedType(JSON.parse(storageType))
+            : i === 0 && setSelectedType(Number(match.matchtype));
         });
         setMatchType(data);
       });
-  }, []);
+  }, [ouid]);
 
   useEffect(() => {
     const headers = {
@@ -41,7 +45,10 @@ export default function MatchList({ ouid }: IUserInfo) {
         { headers }
       )
         .then((res) => res.json())
-        .then((data) => setMatchRecord(data))
+        .then((data) => {
+          setMatchRecord(data);
+          sessionStorage.setItem("MatchRecord", JSON.stringify(data));
+        })
         .catch((error) =>
           console.error("매치 데이터를 불러오는 중 오류가 발생했습니다.", error)
         );
@@ -59,13 +66,16 @@ export default function MatchList({ ouid }: IUserInfo) {
         className="flex items-center gap-2 mb-5"
       >
         {matchType &&
-          matchType.map((match, i) => (
+          matchType.map((match) => (
             <button
               key={match.matchtype}
               onClick={() => {
                 setSelectedType(match.matchtype);
+                sessionStorage.setItem(
+                  "SelectedMatchType",
+                  match.matchtype.toString()
+                );
               }}
-              data-type={`${i} = ${match.matchtype}`}
               className={`w-auto h-auto p-2 ${
                 selectedType === match.matchtype
                   ? "bg-indigo-600 font-bold"
@@ -88,7 +98,9 @@ export default function MatchList({ ouid }: IUserInfo) {
           ))}
         </ul>
       ) : (
-        <div className="py-[30px] text-center">매치 기록이 없습니다.</div>
+        <div className="py-[30px] text-center">
+          <p>매치 기록이 없습니다.</p>
+        </div>
       )}
     </>
   );

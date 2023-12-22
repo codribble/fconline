@@ -10,9 +10,9 @@ export default function Tier({ desc, tier, achievementDate }: IBestTier) {
       <div className="flex justify-between">
         <p>{tier}</p>
         <time>
-          {moment(
-            moment.utc(moment.utc(achievementDate).format()).toDate()
-          ).format("YYYY년 MM월 DD일")}
+          {moment(moment.utc(moment.utc(achievementDate)).toDate()).format(
+            "YYYY년 MM월 DD일"
+          )}
         </time>
       </div>
     </li>

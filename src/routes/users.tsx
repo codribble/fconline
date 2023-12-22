@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import UserBestTier from "../components/users/user_tier";
-import MatchList from "../components/users/user_match";
+import UserMatchList from "../components/users/user_match";
+import { useNavigationType } from "react-router-dom";
+// import UserTrade from "../components/users/user_trade";
 
 export interface IUserInfo {
   ouid: string;
@@ -16,6 +18,7 @@ export interface IMatchType {
 }
 
 export default function Users() {
+  const navigationType = useNavigationType();
   const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [user, setUser] = useState<IUserInfo | null>(null);
@@ -29,6 +32,26 @@ export default function Users() {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (navigationType === "POP") {
+      const userData = sessionStorage.getItem("User");
+
+      if (userData) {
+        const userJSON = JSON.parse(userData);
+
+        setUser(userJSON);
+        setNickname(userJSON.nickname);
+        setIsLoading(false);
+      }
+    }
+
+    if (navigationType === "PUSH") {
+      setUser(null);
+      setIsLoading(true);
+      sessionStorage.clear();
+    }
+  }, [navigationType]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,12 +74,11 @@ export default function Users() {
           .then((data) => {
             setUser(data);
             sessionStorage.setItem("User", JSON.stringify(data));
+            setIsLoading(false);
           })
           .catch((error) => {
             console.error("Error fetching user data: ", error);
           });
-
-        setIsLoading(false);
       });
     // fetchData();
   };
@@ -119,21 +141,27 @@ export default function Users() {
                   님의 매치 기록
                 </p>
 
-                <MatchList {...user} />
+                <UserMatchList {...user} />
               </div>
 
-              {/* <div className="w-full mt-[50px]">
-                <p className="block mb-[20px]">
-                  <strong className="font-bold text-xl">{user.nickname}</strong>
-                  님의 거래 기록
-                </p>
+              {/* user.ouid === "cbb7a30a1f99de28ad2ae118fa60eef5" && (
+                <div className="w-full mt-[50px]">
+                  <p className="block mb-[20px]">
+                    <strong className="font-bold text-xl">
+                      {user.nickname}
+                    </strong>
+                    님의 거래 기록
+                  </p>
 
-                <UserTrade {...user} />
-              </div> */}
+                  <UserTrade {...user} />
+                </div>
+              ) */}
             </div>
           </div>
         ) : (
-          <div className="py-[30px] text-center">검색한 감독명이 없습니다.</div>
+          <div className="py-[30px] text-center">
+            <p>검색 결과가 없습니다.</p>
+          </div>
         )}
       </div>
     </>
