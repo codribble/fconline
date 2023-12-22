@@ -20,7 +20,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
       "x-nxopen-api-key": import.meta.env.VITE_FCONLINE_API_KEY,
     };
 
-    const fetchMatchData = async () => {
+    const fetchMatchData = async (retryCount = 3) => {
       try {
         const response = await fetch(
           `https://open.api.nexon.com/fconline/v1/match-detail?matchid=${matchId}`,
@@ -39,9 +39,13 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
 
           setIsLoaded(true);
         } else {
-          console.error(
-            `Failed to fetch match data. Status: ${response.status}`
-          );
+          if (retryCount > 0) {
+            fetchMatchData(retryCount - 1);
+          } else {
+            console.error(
+              `Failed to fetch match data. Status: ${response.status}`
+            );
+          }
         }
       } catch (error) {
         console.error("Error fetching match data:", error);
@@ -243,7 +247,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
       </Link>
     </li>
   ) : (
-    <li className="w-full py-[30px] text-center">
+    <li className="w-full text-center">
       <p>매치 데이터 불러오는 중...</p>
     </li>
   );
