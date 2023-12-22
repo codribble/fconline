@@ -93,7 +93,7 @@ export default function UserBestTier({ ouid }: IUserInfo) {
             });
 
           setBestTier(data);
-          sessionStorage.setItem("BestTier", JSON.stringify(data));
+          // sessionStorage.setItem("BestTier", JSON.stringify(data));
         })
         .catch((error) => {
           console.error("Error fetching tier data: ", error);
