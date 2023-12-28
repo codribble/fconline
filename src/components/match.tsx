@@ -72,7 +72,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
         }}
         className="flex flex-col gap-2"
       >
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           {matchData && matchData?.matchType < 200 ? (
             <div className="flex items-center gap-[30px] w-2/5">
               {matchData?.matchInfo &&

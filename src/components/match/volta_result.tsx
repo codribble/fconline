@@ -249,10 +249,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                         p.spGrade > 1
                                           ? p.spGrade > 4
                                             ? p.spGrade > 7
-                                              ? "bg-amber-400 text-zinc-800"
-                                              : "bg-gray-300 text-gray-600"
-                                            : "bg-yellow-700 text-zinc-900"
-                                          : "bg-zinc-700 text-white"
+                                              ? "bg-[#f3cf3e] text-[#634e00]"
+                                              : "bg-[#d3d6dc] text-[#5c626c]"
+                                            : "bg-[#d38763] text-[#733c2a]"
+                                          : "bg-[#4d5055] text-[#c6c6c6]"
                                       } px-[10px] font-bold`}
                                     >
                                       {p.spGrade}
@@ -268,44 +268,92 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                             key={p.spId}
                             className="flex"
                           >
-                            <div className="flex w-[120px] mr-[5px] bg-white/10 text-xl font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[120px] mr-[5px] text-xl font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {(
                                   Math.floor(p.status.spRating * 10) / 10
                                 ).toFixed(1)}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.goal}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.effectiveShoot}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.assist}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.passSuccess}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.dribbleSuccess}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.tackle}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.blockTry}
                               </div>
@@ -433,10 +481,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                         p.spGrade > 1
                                           ? p.spGrade > 4
                                             ? p.spGrade > 7
-                                              ? "bg-amber-400 text-zinc-800"
-                                              : "bg-gray-300 text-gray-600"
-                                            : "bg-yellow-700 text-zinc-900"
-                                          : "bg-zinc-700 text-white"
+                                              ? "bg-[#f3cf3e] text-[#634e00]"
+                                              : "bg-[#d3d6dc] text-[#5c626c]"
+                                            : "bg-[#d38763] text-[#733c2a]"
+                                          : "bg-[#4d5055] text-[#c6c6c6]"
                                       } px-[10px] font-bold`}
                                     >
                                       {p.spGrade}
@@ -452,44 +500,92 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                             key={p.spId}
                             className="flex"
                           >
-                            <div className="flex w-[120px] mr-[5px] bg-white/10 text-xl font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[120px] mr-[5px] text-xl font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {(
                                   Math.floor(p.status.spRating * 10) / 10
                                 ).toFixed(1)}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.goal}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.effectiveShoot}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.assist}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.passSuccess}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.dribbleSuccess}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.tackle}
                               </div>
                             </div>
-                            <div className="flex w-[70px] bg-white/10 font-bold text-center group-hover:bg-[#eff134] group-hover:text-black">
+                            <div
+                              className={`flex w-[70px] font-bold text-center${
+                                data.ouid === ouid
+                                  ? " bg-[#eff134] text-black"
+                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                              }`}
+                            >
                               <div className="flex items-center justify-center w-full h-full">
                                 {p.status.blockTry}
                               </div>
