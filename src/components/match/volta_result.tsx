@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { IPlayerInfo } from "../../routes/players";
+import { IPlayerInfo, ISeasonInfo } from "../../routes/players";
 import { IPosition } from "../../routes/player_details";
-import { ISeasonInfo } from "../player";
 import { IMatchInfo } from "../match_detail";
 import { IResult } from "./match_result";
 

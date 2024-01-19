@@ -1,26 +1,26 @@
+// import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 
-interface IPlayerDetails {
-  id: number;
-  name: string;
-  thumbs: string;
-  seasonImg: string;
-  seasonClass: string;
+export interface IPosition {
+  spposition: number;
+  desc: string;
 }
 
 export default function PlayerDetails() {
-  const location = useLocation();
-  const [info, setInfo] = useState<IPlayerDetails>();
-
-  useEffect(() => {
-    setInfo(location.state);
-  }, [location.state]);
+  const { name, thumbs, seasonImg, seasonClass } = useLocation().state;
 
   return (
     <>
-      <h2>{info?.name}</h2>
-      <img src={info?.thumbs} />
+      <div>
+        <img src={thumbs} />
+      </div>
+      <h2 className="flex items-center gap-[5px]">
+        <img
+          src={seasonImg}
+          alt={seasonClass}
+        />
+        {name}
+      </h2>
     </>
   );
 }

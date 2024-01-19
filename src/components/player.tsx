@@ -1,13 +1,7 @@
 // import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { IPlayerInfo } from "../routes/players";
+import { IPlayerInfo, ISeasonInfo } from "../routes/players";
 import { ReactEventHandler, useEffect, useState } from "react";
-
-export interface ISeasonInfo {
-  seasonId: number;
-  seasonImg: string;
-  className: string;
-}
 
 /* const Wrapper = styled.div`
   display: flex;
@@ -59,16 +53,17 @@ export default function Player({ id, name }: IPlayerInfo) {
   useEffect(() => {
     fetch("https://open.api.nexon.com/static/fconline/meta/seasonid.json")
       .then((res) => res.json())
-      .then((data) => setSeasons(data));
+      .then((data) => setSeasons(data))
+      .catch((error) => console.error("Error fetching season data", error));
   }, []);
 
   useEffect(() => {
-    seasons.map((data: ISeasonInfo) => {
+    seasons.map((data) => {
       if (data.seasonId.toString() === seasonId.toString()) setSeason(data);
     });
   }, [seasonId, seasons]);
 
-  console.log(seasons);
+  // console.log(seasons);
 
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
@@ -104,7 +99,7 @@ export default function Player({ id, name }: IPlayerInfo) {
   return (
     <>
       {isLoading && (
-        <li className="flex items-center gap-5 p-5 first:border-t border-b border-solid border-gray-300 border-opacity-50">
+        <li className="flex items-center gap-5 py-2 px-4 first:border-t border-b border-solid border-gray-300 border-opacity-50">
           <div className="flex flex-col gap-3">
             <div className={`relative w-[80px]`}>
               <img
@@ -133,6 +128,7 @@ export default function Player({ id, name }: IPlayerInfo) {
                   e.preventDefault();
                   navigate(`/players/${id}`, {
                     state: {
+                      id: id,
                       name: name,
                       thumbs: imgUrl,
                       seasonImg: season?.seasonImg,

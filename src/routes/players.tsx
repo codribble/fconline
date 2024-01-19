@@ -3,10 +3,18 @@ import { useEffect, useRef, useState } from "react";
 // import Loading from "../components/loading";
 import Player from "../components/player";
 import Pagination from "../components/pagination";
+/* import axios from "axios";
+import * as cheerio from "cheerio"; */
 
 export interface IPlayerInfo {
   id: number;
   name: string;
+}
+
+export interface ISeasonInfo {
+  seasonId: number;
+  seasonImg: string;
+  className: string;
 }
 
 /* const Wrapper = styled.div`
@@ -34,6 +42,7 @@ export default function Players() {
   const [isAutoSearch, setIsAutoSearch] = useState(false);
   const [isShowRelated, setIsShowRelated] = useState(false);
   const [players, setPlayers] = useState<IPlayerInfo[]>([]);
+  const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [searchPlayers, setSearchPlayers] = useState<IPlayerInfo[]>([]);
   const [keywords, setKeywords] = useState("");
   const [autoKeywords, setAutoKeywords] = useState("");
@@ -57,8 +66,36 @@ export default function Players() {
         console.error("Error fetching player data: ", error);
       });
 
+    fetch("https://open.api.nexon.com/static/fconline/meta/seasonid.json")
+      .then((res) => res.json())
+      .then((data) => setSeasons(data))
+      .catch((error) => console.error("Error fetching season data", error));
+
     inputRef.current?.focus();
   }, []);
+
+  /* useEffect(() => {
+    players.map(async (data) => {
+      try {
+        const html = await axios.get(
+          `https://fconline.nexon.com/DataCenter/PlayerInfo?spid=${data.id}&n1Strong=1`
+        );
+        const playerData: object[] = [];
+        const $ = cheerio.load(html.data);
+        const dataList = $("div.data_detail");
+
+        dataList.map((i, el) => {
+          playerData[i] = {
+            pay: $(el).find(".pay_side").text(),
+          };
+        });
+
+        console.log(playerData);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }, [players]); */
 
   const onKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -183,75 +220,106 @@ export default function Players() {
     <>
       <form
         onSubmit={onSubmit}
-        className="flex items-center gap-5"
+        className=""
         autoComplete="off"
       >
-        <div className="w-[100px]">
-          <label
-            htmlFor="name"
-            className="w-full"
-          >
-            선수명
-          </label>
-        </div>
-        <div className="relative flex w-full">
-          <div className="relate flex">
-            <input
-              id="name"
-              type="text"
-              ref={inputRef}
-              value={isAutoSearch ? autoKeywords : keywords}
-              onKeyUp={onKeyUp}
-              onChange={onKeywordChange}
-              className="w-[200px] px-2 py-2 text-black"
-              placeholder="선수명"
-            />
-            <input
-              type="submit"
-              value="검색"
-              className="w-[60px] bg-indigo-600 cursor-pointer"
-            />
+        <fieldset className="flex items-center gap-5">
+          <div className="w-[100px]">
+            <label
+              htmlFor="name"
+              className="w-full"
+            >
+              선수명
+            </label>
           </div>
-          {isShowRelated && relatedKeywords?.length > 0 && (
-            <div className="overflow-hidden overflow-y-auto absolute top-full w-[200px] max-h-[300px] bg-gray-50 border border-solid border-black z-[1]">
-              <ul
-                role="list"
-                ref={listRef}
-              >
-                {relatedKeywords.map((data, index) => (
-                  <li key={index}>
-                    <a
-                      href="#"
-                      ref={focusRef}
-                      onClick={onInsertKeyword}
-                      className={`block w-full p-[10px] ${
-                        focusIndex === index
-                          ? "bg-indigo-400 text-white"
-                          : "bg-white text-gray-900"
-                      } hover:bg-indigo-400 hover:text-white`}
-                    >
-                      {data
-                        .split(new RegExp(`(${keywords})`, "ig"))
-                        .map((part) =>
-                          part.toLowerCase() ===
-                          keywords.toLocaleLowerCase() ? (
-                            <span
-                              key={part}
-                              className="font-bold text-indigo-600"
-                            >
-                              {part}
-                            </span>
-                          ) : (
-                            part
-                          )
-                        )}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+          <div className="relative flex w-full">
+            <div className="relate flex">
+              <input
+                id="name"
+                type="text"
+                ref={inputRef}
+                value={isAutoSearch ? autoKeywords : keywords}
+                onKeyUp={onKeyUp}
+                onChange={onKeywordChange}
+                className="w-[200px] px-2 py-2 text-black"
+                placeholder="선수명"
+              />
+              <input
+                type="submit"
+                value="검색"
+                className="w-[60px] bg-indigo-600 cursor-pointer"
+              />
             </div>
-          )}
-        </div>
+            {isShowRelated && relatedKeywords?.length > 0 && (
+              <div className="overflow-hidden overflow-y-auto absolute top-full w-[200px] max-h-[300px] bg-gray-50 border border-solid border-black z-[1]">
+                <ul
+                  role="list"
+                  ref={listRef}
+                >
+                  {relatedKeywords.map((data, index) => (
+                    <li key={index}>
+                      <a
+                        href="#"
+                        ref={focusRef}
+                        onClick={onInsertKeyword}
+                        className={`block w-full p-[10px] ${
+                          focusIndex === index
+                            ? "bg-indigo-400 text-white"
+                            : "bg-white text-gray-900"
+                        } hover:bg-indigo-400 hover:text-white`}
+                      >
+                        {data
+                          .split(new RegExp(`(${keywords})`, "ig"))
+                          .map((part) =>
+                            part.toLowerCase() ===
+                            keywords.toLocaleLowerCase() ? (
+                              <span
+                                key={part}
+                                className="font-bold text-indigo-600"
+                              >
+                                {part}
+                              </span>
+                            ) : (
+                              part
+                            )
+                          )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </fieldset>
+
+        <fieldset className="mt-[20px]">
+          <div className="flex flex-wrap gap-2">
+            {seasons &&
+              seasons.map((season, i) => (
+                <div
+                  key={i}
+                  className="relative w-[35px]"
+                >
+                  <input
+                    type="checkbox"
+                    name="season[]"
+                    id={season.seasonId.toString()}
+                    value={season.seasonId}
+                    className="hidden peer"
+                  />
+                  <label
+                    htmlFor={season.seasonId.toString()}
+                    className="block cursor-pointer opacity-50 peer-checked:opacity-100"
+                  >
+                    <img
+                      src={season.seasonImg}
+                      className="w-full"
+                    />
+                  </label>
+                </div>
+              ))}
+          </div>
+        </fieldset>
       </form>
 
       <div className="flex flex-col flex-wrap mt-10">
@@ -287,7 +355,11 @@ export default function Players() {
         </ul>
 
         <Pagination
-          total={searchPlayers.length ? searchPlayers.length : players.length}
+          total={
+            isSearch && searchPlayers.length
+              ? searchPlayers.length
+              : players.length
+          }
           limit={limit}
           page={page}
           setPage={setPage}
