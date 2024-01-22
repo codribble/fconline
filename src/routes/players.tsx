@@ -47,7 +47,9 @@ export default function Players() {
   const [keywords, setKeywords] = useState("");
   const [autoKeywords, setAutoKeywords] = useState("");
   const [relatedKeywords, setRelatedKeywords] = useState<string[]>([]);
+  const [checkedList, setCheckedList] = useState<string[]>([]);
   const [focusIndex, setFocusIndex] = useState(-1);
+  const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -60,6 +62,7 @@ export default function Players() {
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
+        setTotalPage(data.length);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -195,11 +198,22 @@ export default function Players() {
     inputRef.current?.focus();
   };
 
+  const onCheckedSsesons = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    const checkedSeason = e.target.value;
+
+    if (checked) {
+      setCheckedList((prev) => [...prev, checkedSeason]);
+    } else {
+      setCheckedList(checkedList.filter((item) => item !== checkedSeason));
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const filteredPlayers = players.filter((player) =>
-      player.name
+    const filteredPlayers = players.filter((player) => {
+      const keywordCase = player.name
         .toLowerCase()
         .split(" ")
         .join("")
@@ -208,11 +222,18 @@ export default function Players() {
             .toLowerCase()
             .split(" ")
             .join("")
-        )
-    );
+        );
 
-    setIsSearch(keywords.length > 0);
+      const seasonCase =
+        checkedList.length === 0 ||
+        checkedList.includes(player.id.toString().substr(0, 3));
+
+      return keywordCase && seasonCase;
+    });
+
+    setIsSearch(keywords.length > 0 || checkedList.length > 0);
     setSearchPlayers(filteredPlayers);
+    setTotalPage(filteredPlayers.length);
     setIsShowRelated(false);
   };
 
@@ -223,7 +244,7 @@ export default function Players() {
         className=""
         autoComplete="off"
       >
-        <fieldset className="flex items-center gap-5">
+        <div className="flex items-center gap-5">
           <div className="w-[100px]">
             <label
               htmlFor="name"
@@ -290,9 +311,9 @@ export default function Players() {
               </div>
             )}
           </div>
-        </fieldset>
+        </div>
 
-        <fieldset className="mt-[20px]">
+        <div className="mt-[20px]">
           <div className="flex flex-wrap gap-2">
             {seasons &&
               seasons.map((season, i) => (
@@ -302,10 +323,11 @@ export default function Players() {
                 >
                   <input
                     type="checkbox"
-                    name="season[]"
                     id={season.seasonId.toString()}
+                    name="season[]"
                     value={season.seasonId}
                     className="hidden peer"
+                    onChange={onCheckedSsesons}
                   />
                   <label
                     htmlFor={season.seasonId.toString()}
@@ -319,7 +341,7 @@ export default function Players() {
                 </div>
               ))}
           </div>
-        </fieldset>
+        </div>
       </form>
 
       <div className="flex flex-col flex-wrap mt-10">
@@ -336,8 +358,8 @@ export default function Players() {
                 />
               ))
             ) : (
-              <li className="w-full py-10 text-center">
-                {`'${keywords}'로 검색된 선수가 없습니다.`}
+              <li className="w-full py-20 text-center">
+                {`'${keywords}'(으)로 검색된 선수가 없습니다.`}
               </li>
             )
           ) : players.length ? (
@@ -348,18 +370,14 @@ export default function Players() {
               />
             ))
           ) : (
-            <li className="w-full py-10 text-center">
+            <li className="w-full py-20 text-center">
               {isLoading ? "선수 목록 생성중..." : "등록된 선수가 없습니다."}
             </li>
           )}
         </ul>
 
         <Pagination
-          total={
-            isSearch && searchPlayers.length
-              ? searchPlayers.length
-              : players.length
-          }
+          total={totalPage}
           limit={limit}
           page={page}
           setPage={setPage}
