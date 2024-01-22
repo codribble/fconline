@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import styled from "styled-components";
-// import Loading from "../components/loading";
 import Player from "../components/player";
 import Pagination from "../components/pagination";
 /* import axios from "axios";
@@ -16,25 +14,6 @@ export interface ISeasonInfo {
   seasonImg: string;
   className: string;
 }
-
-/* const Wrapper = styled.div`
-  width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
-`;
-
-const Label = styled.label``;
-
-const Input = styled.input`
-  background-color: white;
-  border: 0;
-`;
-
-const List = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`; */
 
 export default function Players() {
   const [isLoading, setIsLoading] = useState(true);
@@ -332,6 +311,7 @@ export default function Players() {
                   <label
                     htmlFor={season.seasonId.toString()}
                     className="block cursor-pointer opacity-50 peer-checked:opacity-100"
+                    title={season.className}
                   >
                     <img
                       src={season.seasonImg}
@@ -345,6 +325,10 @@ export default function Players() {
       </form>
 
       <div className="flex flex-col flex-wrap mt-10">
+        <p className="mb-[20px] text-lg">
+          <span className="font-bold">{total}</span> 명
+        </p>
+
         <ul
           role="list"
           className="flex flex-col flex-wrap gap-3"

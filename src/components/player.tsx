@@ -1,40 +1,6 @@
-// import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { IPlayerInfo, ISeasonInfo } from "../routes/players";
 import { ReactEventHandler, useEffect, useState } from "react";
-
-/* const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  border: 1px solid rgb(255 255 255 / 0.5);
-  border-radius: 15px;
-`;
-
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  &:last-child:not(:first-child) {
-    align-items: center;
-  }
-`;
-
-const Row = styled.div`
-  display: flex;
-  align-self: flex-start;
-  align-items: center;
-  gap: 10px;
-`;
-
-const Thumbs = styled.div``;
-
-const SeasonImg = styled.div``;
-
-const Name = styled.p`
-  font-weight: 600;
-  font-size: 20px;
-`; */
 
 export default function Player({ id, name }: IPlayerInfo) {
   const navigate = useNavigate();
@@ -129,6 +95,7 @@ export default function Player({ id, name }: IPlayerInfo) {
                   navigate(`/players/${id}`, {
                     state: {
                       id: id,
+                      seasonId: seasonId,
                       name: name,
                       thumbs: imgUrl,
                       seasonImg: season?.seasonImg,
