@@ -45,7 +45,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
     if (!(e.target instanceof HTMLImageElement)) return;
 
     const spId = e.target.dataset.spid;
-    const pId = Number(spId?.substr(3, 6));
+    const pId = Number(spId?.substring(3));
 
     switch (e.target.src) {
       default:
@@ -180,7 +180,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                     .filter(
                                       (data) =>
                                         data.seasonId.toString() ===
-                                        p.spId.toString().substr(0, 3)
+                                        p.spId.toString().substring(0, 3)
                                     )
                                     .map((data, i) => (
                                       <img
@@ -412,7 +412,7 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                     .filter(
                                       (data) =>
                                         data.seasonId.toString() ===
-                                        p.spId.toString().substr(0, 3)
+                                        p.spId.toString().substring(0, 3)
                                     )
                                     .map((data, i) => (
                                       <img

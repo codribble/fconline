@@ -42,8 +42,8 @@ export default function Player({ id, name }: IPlayerInfo) {
   const [imgUrl, setImgUrl] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
   );
-  const pId = Number(id.toString().substr(3, 6));
-  const seasonId = Number(id.toString().substr(0, 3));
+  const pId = Number(id.toString().substring(3));
+  const seasonId = Number(id.toString().substring(0, 3));
   const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [season, setSeason] = useState<ISeasonInfo | null>(null);
   /* const headers = {

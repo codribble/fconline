@@ -49,7 +49,7 @@ export default function Players() {
   const [relatedKeywords, setRelatedKeywords] = useState<string[]>([]);
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [focusIndex, setFocusIndex] = useState(-1);
-  const [totalPage, setTotalPage] = useState(1);
+  const [total, setTotal] = useState(1);
   const [page, setPage] = useState(1);
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -62,7 +62,7 @@ export default function Players() {
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
-        setTotalPage(data.length);
+        setTotal(data.length);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -226,14 +226,14 @@ export default function Players() {
 
       const seasonCase =
         checkedList.length === 0 ||
-        checkedList.includes(player.id.toString().substr(0, 3));
+        checkedList.includes(player.id.toString().substring(0, 3));
 
       return keywordCase && seasonCase;
     });
 
     setIsSearch(keywords.length > 0 || checkedList.length > 0);
     setSearchPlayers(filteredPlayers);
-    setTotalPage(filteredPlayers.length);
+    setTotal(filteredPlayers.length);
     setIsShowRelated(false);
   };
 
@@ -244,7 +244,7 @@ export default function Players() {
         className=""
         autoComplete="off"
       >
-        <div className="flex items-center gap-5">
+        <fieldset className="flex items-center gap-5">
           <div className="w-[100px]">
             <label
               htmlFor="name"
@@ -311,10 +311,10 @@ export default function Players() {
               </div>
             )}
           </div>
-        </div>
+        </fieldset>
 
-        <div className="mt-[20px]">
-          <div className="flex flex-wrap gap-2">
+        <fieldset className="mt-[20px]">
+          <div className="flex flex-wrap gap-4">
             {seasons &&
               seasons.map((season, i) => (
                 <div
@@ -341,7 +341,7 @@ export default function Players() {
                 </div>
               ))}
           </div>
-        </div>
+        </fieldset>
       </form>
 
       <div className="flex flex-col flex-wrap mt-10">
@@ -377,7 +377,7 @@ export default function Players() {
         </ul>
 
         <Pagination
-          total={totalPage}
+          total={total}
           limit={limit}
           page={page}
           setPage={setPage}
