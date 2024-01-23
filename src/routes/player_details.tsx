@@ -14,8 +14,8 @@ export default function PlayerDetails() {
   /* const { id, seasonId, name, thumbs, seasonImg, seasonClass } =
     useLocation().state; */
   const { id } = useParams();
-  const pId = id?.toString().substring(3);
-  const seasonId = id?.toString().substring(0, 3);
+  const pId = Number(id?.toString().substring(3));
+  const seasonId = Number(id?.toString().substring(0, 3));
   const [name, setName] = useState("");
   const [thumbs, setThumbs] = useState("");
   const [players, setPlayers] = useState<IPlayerInfo[]>([]);
@@ -83,7 +83,6 @@ export default function PlayerDetails() {
     e.preventDefault();
 
     switch (thumbs) {
-      default:
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`:
         setThumbs(
           `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`
@@ -120,7 +119,7 @@ export default function PlayerDetails() {
         </div>
         <h2 className="flex items-center gap-[5px] text-2xl">
           {seasons
-            .filter((data) => data.seasonId.toString() === seasonId)
+            .filter((data) => data.seasonId === seasonId)
             .map((data) => (
               <img
                 key={data.seasonId}
@@ -145,9 +144,7 @@ export default function PlayerDetails() {
                 <div
                   key={`${player.id}-${season.seasonId}-${season.className}`}
                   className={
-                    season.seasonId.toString() === seasonId
-                      ? "opacity-100"
-                      : "opacity-50"
+                    season.seasonId === seasonId ? "opacity-100" : "opacity-50"
                   }
                 >
                   <Link to={`/players/${player.id}`}>
