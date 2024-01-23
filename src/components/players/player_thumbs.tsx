@@ -4,9 +4,10 @@ import { ReactEventHandler, /* useEffect, */ useState } from "react";
 export interface IPlayerThumbs {
   spId: number;
   name: string;
+  width?: string;
 }
 
-export default function PlayerThumbs({ spId, name }: IPlayerThumbs) {
+export default function PlayerThumbs({ spId, name, width }: IPlayerThumbs) {
   const [thumbs, setThumbs] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${spId}.png`
   );
@@ -83,6 +84,7 @@ export default function PlayerThumbs({ spId, name }: IPlayerThumbs) {
           src={thumbs}
           alt={name}
           onError={onError}
+          className={width ? width : "w-full"}
         />
       )}
     </>
