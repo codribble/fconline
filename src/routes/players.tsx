@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Player from "../components/player";
 import Pagination from "../components/pagination";
-/* import axios from "axios";
-import * as cheerio from "cheerio"; */
+// import axios from "axios";
+// import * as cheerio from "cheerio";
 
 export interface IPlayerInfo {
   id: number;
@@ -55,29 +55,6 @@ export default function Players() {
 
     inputRef.current?.focus();
   }, []);
-
-  /* useEffect(() => {
-    players.map(async (data) => {
-      try {
-        const html = await axios.get(
-          `https://fconline.nexon.com/DataCenter/PlayerInfo?spid=${data.id}&n1Strong=1`
-        );
-        const playerData: object[] = [];
-        const $ = cheerio.load(html.data);
-        const dataList = $("div.data_detail");
-
-        dataList.map((i, el) => {
-          playerData[i] = {
-            pay: $(el).find(".pay_side").text(),
-          };
-        });
-
-        console.log(playerData);
-      } catch (error) {
-        console.error(error);
-      }
-    });
-  }, [players]); */
 
   const onKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -224,16 +201,14 @@ export default function Players() {
         autoComplete="off"
       >
         <fieldset className="flex items-center gap-5">
-          <div className="w-[100px]">
-            <label
-              htmlFor="name"
-              className="w-full"
-            >
-              선수명
-            </label>
-          </div>
           <div className="relative flex w-full">
             <div className="relate flex">
+              <label
+                htmlFor="name"
+                className="hidden"
+              >
+                선수명
+              </label>
               <input
                 id="name"
                 type="text"
@@ -326,7 +301,7 @@ export default function Players() {
 
       <div className="flex flex-col flex-wrap mt-10">
         <p className="mb-[20px] text-lg">
-          <span className="font-bold">{total}</span> 명
+          검색 결과: <span className="font-bold">{total}</span> 명
         </p>
 
         <ul

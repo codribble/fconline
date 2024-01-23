@@ -91,15 +91,13 @@ export default function Users() {
         className="flex items-center gap-5"
         autoComplete="off"
       >
-        <div className="w-[100px]">
+        <div className="relative flex w-full">
           <label
             htmlFor="nickname"
-            className="w-full"
+            className="hidden"
           >
             감독명
           </label>
-        </div>
-        <div className="relative flex w-full">
           <input
             ref={inputRef}
             id="nickname"
