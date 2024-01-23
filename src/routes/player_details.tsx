@@ -1,6 +1,7 @@
-import { ReactEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, /* useLocation, */ useParams } from "react-router-dom";
 import { IPlayerInfo, ISeasonInfo } from "./players";
+import PlayerThumbs from "../components/players/player_thumbs";
 // import axios from "axios";
 // import * as cheerio from "cheerio";
 
@@ -13,10 +14,8 @@ export default function PlayerDetails() {
   /* const { id, seasonId, name, thumbs, seasonImg, seasonClass } =
     useLocation().state; */
   const { id } = useParams();
-  const pId = Number(id?.toString().substring(3));
   const seasonId = Number(id?.toString().substring(0, 3));
   const [name, setName] = useState("");
-  const [thumbs, setThumbs] = useState("");
   const [players, setPlayers] = useState<IPlayerInfo[]>([]);
   const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [otherSeason, setOtherSeason] = useState<ISeasonInfo[]>([]);
@@ -73,49 +72,17 @@ export default function PlayerDetails() {
     });
 
     setOtherSeasonPlayers(samePlayer);
-    setThumbs(
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
-    );
   }, [id, name, players, seasons]);
-
-  const onError: ReactEventHandler<HTMLImageElement> = (e) => {
-    e.preventDefault();
-
-    switch (thumbs) {
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`:
-        setThumbs(
-          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`
-        );
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`:
-        setThumbs(
-          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`
-        );
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`:
-        setThumbs(
-          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`
-        );
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
-        setThumbs(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
-        break;
-    }
-  };
 
   return (
     <section className="">
       <div className="flex gap-[10px]">
         <div>
-          {thumbs ? (
-            <img
-              src={thumbs}
-              alt={name}
-              onError={onError}
-            />
-          ) : (
-            <p>이미지를 불러올 수 없습니다.</p>
-          )}
+          <PlayerThumbs
+            key={id}
+            spId={Number(id)}
+            name={name}
+          />
         </div>
         <h2 className="flex items-center gap-[5px] text-2xl font-bold">
           {seasons

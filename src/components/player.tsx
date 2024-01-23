@@ -1,14 +1,11 @@
 import { Link /* , useNavigate */ } from "react-router-dom";
 import { IPlayerInfo, ISeasonInfo } from "../routes/players";
-import { ReactEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PlayerThumbs from "./players/player_thumbs";
 
 export default function Player({ id, name }: IPlayerInfo) {
   // const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [thumbs, setThumbs] = useState(
-    `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
-  );
-  const pId = Number(id.toString().substring(3));
+  const [isLoading, setIsLoading] = useState(false);
   const seasonId = Number(id.toString().substring(0, 3));
   const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [season, setSeason] = useState<ISeasonInfo | null>(null);
@@ -27,40 +24,11 @@ export default function Player({ id, name }: IPlayerInfo) {
     seasons.map((data) => {
       if (data.seasonId.toString() === seasonId.toString()) setSeason(data);
     });
+
+    setIsLoading(true);
   }, [seasonId, seasons]);
 
   // console.log(seasons);
-
-  const onError: ReactEventHandler<HTMLImageElement> = (e) => {
-    e.preventDefault();
-
-    switch (thumbs) {
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`:
-        setThumbs(
-          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`
-        );
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`:
-        setThumbs(
-          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`
-        );
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`:
-        setThumbs(
-          `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`
-        );
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
-        /* setThumbs(
-                "https://ssl.nexon.com/s2/game/fc/mobile/squadMaker/default/d_player.png"
-                ); */
-        setThumbs(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
-        break;
-      default:
-        setIsLoading(false);
-        break;
-    }
-  };
 
   return (
     <>
@@ -68,11 +36,10 @@ export default function Player({ id, name }: IPlayerInfo) {
         <li className="flex items-center gap-5 py-2 px-4 first:border-t border-b border-solid border-gray-300 border-opacity-50">
           <div className="flex flex-col gap-3">
             <div className={`relative w-[80px]`}>
-              <img
-                src={thumbs}
-                alt={name}
-                onError={onError}
-                className="w-full h-auto"
+              <PlayerThumbs
+                key={id}
+                spId={id}
+                name={name}
               />
             </div>
           </div>
