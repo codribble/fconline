@@ -1,7 +1,7 @@
-import { /* ReactEventHandler, */ useEffect, useState } from "react";
+import { ReactEventHandler, useEffect, useState } from "react";
 import { Link, /* useLocation, */ useParams } from "react-router-dom";
 import { IPlayerInfo, ISeasonInfo } from "./players";
-import axios, { AxiosError } from "axios";
+// import axios from "axios";
 // import * as cheerio from "cheerio";
 
 export interface IPosition {
@@ -78,46 +78,7 @@ export default function PlayerDetails() {
     );
   }, [id, name, players, seasons]);
 
-  useEffect(() => {
-    const thumbsPaths = [
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`,
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`,
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`,
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`,
-    ];
-    const noThumbs = `${import.meta.env.BASE_URL}assets/images/no_thumbs.png`;
-
-    const fetchThumbs = async () => {
-      for (const path of thumbsPaths) {
-        try {
-          // await axios.head(path);
-          const response = await axios.get(path, {
-            responseType: "arraybuffer",
-          });
-
-          if (response.status === 200) {
-            setThumbs(path);
-            return;
-          }
-        } catch (error) {
-          // AxiosError로 명시적으로 타입 캐스팅
-          const axiosError = error as AxiosError;
-
-          if (!axios.isCancel(error) && axiosError.response?.status !== 403) {
-            console.error("Error loading image: ", error);
-          }
-        }
-      }
-
-      if (!thumbs) {
-        setThumbs(noThumbs);
-      }
-    };
-
-    fetchThumbs();
-  }, [id, pId, thumbs]);
-
-  /* const onError: ReactEventHandler<HTMLImageElement> = (e) => {
+  const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
 
     switch (thumbs) {
@@ -140,25 +101,21 @@ export default function PlayerDetails() {
         setThumbs(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
         break;
     }
-  }; */
+  };
 
   return (
     <section className="">
       <div className="flex gap-[10px]">
         <div>
-          {
-            /* <img
-            src={thumbs}
-            alt={name}
-            onError={onError}
-          /> */
-            thumbs && (
-              <img
-                src={thumbs}
-                alt={name}
-              />
-            )
-          }
+          {thumbs ? (
+            <img
+              src={thumbs}
+              alt={name}
+              onError={onError}
+            />
+          ) : (
+            <p>이미지를 불러올 수 없습니다.</p>
+          )}
         </div>
         <h2 className="flex items-center gap-[5px] text-2xl font-bold">
           {seasons
