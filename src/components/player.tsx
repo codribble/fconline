@@ -1,11 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link /* , useNavigate */ } from "react-router-dom";
 import { IPlayerInfo, ISeasonInfo } from "../routes/players";
 import { ReactEventHandler, useEffect, useState } from "react";
 
 export default function Player({ id, name }: IPlayerInfo) {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [imgUrl, setImgUrl] = useState(
+  const [thumbs, setThumbs] = useState(
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`
   );
   const pId = Number(id.toString().substring(3));
@@ -34,27 +34,27 @@ export default function Player({ id, name }: IPlayerInfo) {
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
 
-    switch (imgUrl) {
+    switch (thumbs) {
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${id}.png`:
-        setImgUrl(
+        setThumbs(
           `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`
         );
         break;
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`:
-        setImgUrl(
+        setThumbs(
           `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`
         );
         break;
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${id}.png`:
-        setImgUrl(
+        setThumbs(
           `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`
         );
         break;
       case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
-        /* setImgUrl(
+        /* setThumbs(
                 "https://ssl.nexon.com/s2/game/fc/mobile/squadMaker/default/d_player.png"
                 ); */
-        setImgUrl(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
+        setThumbs(`${import.meta.env.BASE_URL}assets/images/no_thumbs.png`);
         break;
       default:
         setIsLoading(false);
@@ -69,7 +69,7 @@ export default function Player({ id, name }: IPlayerInfo) {
           <div className="flex flex-col gap-3">
             <div className={`relative w-[80px]`}>
               <img
-                src={imgUrl}
+                src={thumbs}
                 alt={name}
                 onError={onError}
                 className="w-full h-auto"
@@ -90,19 +90,19 @@ export default function Player({ id, name }: IPlayerInfo) {
               )}
               <Link
                 to={`/players/${id}`}
-                onClick={(e) => {
+                /* onClick={(e) => {
                   e.preventDefault();
                   navigate(`/players/${id}`, {
                     state: {
                       id: id,
                       seasonId: seasonId,
                       name: name,
-                      thumbs: imgUrl,
+                      thumbs: thumbs,
                       seasonImg: season?.seasonImg,
                       seasonClass: season?.className,
                     },
                   });
-                }}
+                }} */
                 className="font-semibold text-xl"
               >
                 {name}
