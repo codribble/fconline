@@ -10,7 +10,7 @@ export default function Player({ id, name }: IPlayerInfo) {
   const [seasons, setSeasons] = useState<ISeasonInfo[]>([]);
   const [season, setSeason] = useState<ISeasonInfo | null>(null);
   /* const headers = {
-    Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
+    "x-nxopen-api-key": import.meta.env.VITE_FCONLINE_API_KEY,
   }; */
 
   useEffect(() => {
@@ -37,7 +37,6 @@ export default function Player({ id, name }: IPlayerInfo) {
           <div className="flex flex-col gap-3">
             <div className={`relative w-[80px]`}>
               <PlayerThumbs
-                key={id}
                 spId={id}
                 name={name}
               />

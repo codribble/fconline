@@ -106,7 +106,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                         key={i}
                         className="text-xl font-bold"
                       >
-                        {data.shoot.goalTotalDisplay}
+                        {data.shoot?.goalTotalDisplay}
                       </p>
                     ))}
                 <p>vs</p>
@@ -118,7 +118,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                         key={i}
                         className="text-xl font-bold"
                       >
-                        {data.shoot.goalTotalDisplay}
+                        {data.shoot?.goalTotalDisplay}
                       </p>
                     ))}
               </div>
@@ -146,7 +146,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   ))}
             </div>
           ) : (
-            <div className="flex items-center gap-[10px] sm:gap-[30px] w-full">
+            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-[calc(100%-160px)]">
               {matchData.matchInfo &&
                 matchData.matchInfo
                   .filter((data) => data.ouid === ouid)
@@ -181,11 +181,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       )
                       .reduce(
                         (a, b) =>
-                          a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
+                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
                             ? a
                             : b,
                         {} as IMatchInfo
-                      ).shoot.goalTotalDisplay}
+                      ).shoot?.goalTotalDisplay}
                 </p>
                 <p>vs</p>
                 <p className="text-xl font-bold">
@@ -198,11 +198,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       )
                       .reduce(
                         (a, b) =>
-                          a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
+                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
                             ? a
                             : b,
                         {} as IMatchInfo
-                      ).shoot.goalTotalDisplay}
+                      ).shoot?.goalTotalDisplay}
                 </p>
               </div>
               {matchData.matchInfo &&

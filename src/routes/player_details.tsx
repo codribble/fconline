@@ -79,7 +79,6 @@ export default function PlayerDetails() {
       <div className="flex gap-[10px]">
         <div>
           <PlayerThumbs
-            key={id}
             spId={Number(id)}
             name={name}
           />

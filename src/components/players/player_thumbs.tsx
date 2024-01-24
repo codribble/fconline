@@ -1,5 +1,4 @@
-// import axios from "axios";
-import { ReactEventHandler, /* useEffect, */ useState } from "react";
+import { ReactEventHandler, useState } from "react";
 
 export interface IPlayerThumbs {
   spId: number;
@@ -12,45 +11,6 @@ export default function PlayerThumbs({ spId, name, width }: IPlayerThumbs) {
     `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${spId}.png`
   );
   const pId = Number(spId.toString().substring(3));
-  /* const headers = {
-    Authorization: import.meta.env.VITE_FCONLINE_API_KEY,
-  };
-
-  const getActionThumbs = async (spId: number): Promise<string> => {
-    const result = await axios.get(
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${spId}.png`,
-      { headers: headers, responseType: "blob" }
-    );
-
-    if (result.status === 200) return URL.createObjectURL(result.data);
-  };
-
-  const getHeadThumbs = async (pId: number): Promise<string> => {
-    const result = await axios.get(
-      `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`,
-      { headers: headers, responseType: "blob" }
-    );
-
-    if (result.status === 200) return URL.createObjectURL(result.data);
-  };
-
-  useEffect(() => {
-    const getImage = async () => {
-      let result = null;
-
-      try {
-        result = await getActionThumbs(spId);
-      } catch (error) {
-        result = await getHeadThumbs(pId);
-      } finally {
-        console.log(result);
-
-        setThumbs(result);
-      }
-    };
-
-    getImage();
-  }, [pId, spId]); */
 
   const onError: ReactEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
