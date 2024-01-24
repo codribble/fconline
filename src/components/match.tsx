@@ -59,7 +59,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
   // console.log(matchData?.matchInfo);
 
   return matchData && isLoaded ? (
-    <li className="w-full">
+    <li className="w-full py-[15px] border-b border-b-white border-solid sm:p-0 sm:border-0">
       <Link
         to={`/match/${matchId}`}
         onClick={(e) => {
@@ -70,11 +70,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
             },
           });
         }}
-        className="flex flex-col gap-2"
+        className="block w-full"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center justify-between gap-[10px] sm:flex-row">
           {matchData && matchData?.matchType < 200 ? (
-            <div className="flex items-center gap-[30px] w-2/5">
+            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-[calc(100%-160px)]">
               {matchData?.matchInfo &&
                 matchData?.matchInfo
                   .filter((data) => data.ouid === ouid)
@@ -85,11 +85,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     >
                       <p
                         className={`${
-                          data.matchDetail.matchResult === "승"
+                          data.matchDetail.matchResult.includes("승")
                             ? "text-indigo-600"
-                            : data.matchDetail.matchResult === "무"
-                            ? "text-yellow-600"
-                            : "text-red-600"
+                            : data.matchDetail.matchResult.includes("패")
+                            ? "text-red-600"
+                            : "text-yellow-600"
                         } font-bold`}
                       >
                         {data.matchDetail.matchResult}
@@ -133,11 +133,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       <p>{data.nickname}</p>
                       <p
                         className={`${
-                          data.matchDetail.matchResult === "승"
+                          data.matchDetail.matchResult.includes("승")
                             ? "text-indigo-600"
-                            : data.matchDetail.matchResult === "무"
-                            ? "text-yellow-600"
-                            : "text-red-600"
+                            : data.matchDetail.matchResult.includes("패")
+                            ? "text-red-600"
+                            : "text-yellow-600"
                         } font-bold`}
                       >
                         {data.matchDetail.matchResult}
@@ -146,7 +146,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   ))}
             </div>
           ) : (
-            <div className="flex items-center gap-[30px] w-2/5">
+            <div className="flex items-center gap-[10px] sm:gap-[30px] w-full">
               {matchData?.matchInfo &&
                 matchData?.matchInfo
                   .filter((data) => data.ouid === ouid)
@@ -157,11 +157,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     >
                       <p
                         className={`${
-                          data.matchDetail.matchResult === "승"
+                          data.matchDetail.matchResult.includes("승")
                             ? "text-indigo-600"
-                            : data.matchDetail.matchResult === "무"
-                            ? "text-yellow-600"
-                            : "text-red-600"
+                            : data.matchDetail.matchResult.includes("패")
+                            ? "text-red-600"
+                            : "text-yellow-600"
                         } font-bold`}
                       >
                         {data.matchDetail.matchResult}
@@ -176,8 +176,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       .filter(
                         (data) =>
                           data.ouid === ouid &&
-                          (data.matchDetail.matchResult === myResult ||
-                            data.matchDetail.matchResult === "무")
+                          (data.matchDetail.matchResult.includes(myResult) ||
+                            data.matchDetail.matchResult.includes("무"))
                       )
                       .reduce(
                         (a, b) =>
@@ -193,8 +193,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     matchData?.matchInfo
                       .filter(
                         (data) =>
-                          data.matchDetail.matchResult !== myResult ||
-                          data.matchDetail.matchResult === "무"
+                          !data.matchDetail.matchResult.includes(myResult) ||
+                          data.matchDetail.matchResult.includes("무")
                       )
                       .reduce(
                         (a, b) =>
@@ -209,8 +209,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                 matchData?.matchInfo
                   .filter(
                     (info) =>
-                      info.matchDetail.matchResult !== myResult ||
-                      info.matchDetail.matchResult === "무"
+                      !info.matchDetail.matchResult.includes(myResult) ||
+                      info.matchDetail.matchResult.includes("무")
                   )
                   .reduce((a: React.ReactNode[], b, i) => {
                     if (i === 0) {
@@ -222,11 +222,11 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                           <p>상대팀</p>
                           <p
                             className={`${
-                              b.matchDetail.matchResult === "승"
+                              b.matchDetail.matchResult.includes("승")
                                 ? "text-indigo-600"
-                                : b.matchDetail.matchResult === "무"
-                                ? "text-yellow-600"
-                                : "text-red-600"
+                                : b.matchDetail.matchResult.includes("패")
+                                ? "text-red-600"
+                                : "text-yellow-600"
                             } font-bold`}
                           >
                             {b.matchDetail.matchResult}
@@ -238,7 +238,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   }, [])}
             </div>
           )}
-          <p>
+          <p className="flex justify-end w-full sm:w-[150px]">
             {moment(
               moment.utc(moment.utc(matchData?.matchDate)).toDate()
             ).format("YYYY-MM-DD HH:mm:ss")}

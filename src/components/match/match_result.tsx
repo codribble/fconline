@@ -12,7 +12,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
   const [oppositeData, setOppositeData] = useState<IMatchInfo[]>([]);
 
   useEffect(() => {
-    const hasPenalty = matchData?.matchInfo?.some(
+    const hasPenalty = matchData.matchInfo.some(
       (match: IMatchInfo) => match.shoot.shootOutScore > 0
     );
     setMatchPenalty(hasPenalty);
@@ -21,13 +21,11 @@ export default function MatchResult({ matchData, ouid }: IResult) {
   useEffect(() => {
     setMyData(matchData.matchInfo.filter((info) => info.ouid === ouid));
     setOppositeData(matchData.matchInfo.filter((info) => info.ouid !== ouid));
-  }, [matchData.matchInfo, ouid]);
-
-  console.log(`myData: ${myData}, opposite: ${oppositeData}`);
+  }, [matchData, ouid]);
 
   return (
     <>
-      <div className="flex items-end justify-between w-1/3 mx-auto mb-[50px] text-[100px] text-center">
+      <div className="flex items-end justify-between w-1/3 mx-auto mb-[50px] text-6xl text-center md:text-8xl">
         {myData.length &&
           myData.map((data) => (
             <p
@@ -86,15 +84,17 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               key={data.ouid}
               className="flex items-center justify-center gap-5 w-1/4 text-center"
             >
-              <p className="text-[25px] font-bold">{data.nickname}</p>
+              <p className="text-[20px] font-bold md:text-[25px]">
+                {data.nickname}
+              </p>
             </div>
           ))}
-        <div className="flex w-1/3">
+        <div className="flex w-3/5 md:w-1/3">
           {myData.length &&
             myData.map((data) => (
               <div
                 key={data.ouid}
-                className="flex flex-col w-[50px] text-center"
+                className="flex flex-col w-[50px] text-xs leading-none text-center md:text-base"
               >
                 <p className="py-[15px] border-b border-solid border-white/20">
                   {data.shoot.shootTotal}
@@ -103,10 +103,11 @@ export default function MatchResult({ matchData, ouid }: IResult) {
                   {data.shoot.effectiveShootTotal}
                 </p>
                 <p className="py-[15px] border-b border-solid border-white/20">
-                  {Math.floor(
-                    (data.shoot.goalTotal / data.shoot.shootTotal) * 100
-                  )}
-                  %
+                  {data.shoot.goalTotal !== 0 && data.shoot.shootTotal !== 0
+                    ? Math.floor(
+                        (data.shoot.goalTotal / data.shoot.shootTotal) * 100
+                      ) + "%"
+                    : "0%"}
                 </p>
                 <p className="py-[15px] border-b border-solid border-white/20">
                   {Math.floor(
@@ -139,7 +140,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               </div>
             ))}
 
-          <div className="flex flex-col flex-auto text-gray-400 text-center">
+          <div className="flex flex-col flex-auto text-xs leading-none text-gray-400 text-center md:text-base">
             <p className="py-[15px] border-b border-solid border-white/20">
               슛
             </p>
@@ -185,7 +186,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               return (
                 <div
                   key={data.ouid}
-                  className="flex flex-col w-[50px] text-center"
+                  className="flex flex-col w-[50px] text-xs leading-none text-center md:text-base"
                 >
                   <p className="py-[15px] border-b border-solid border-white/20">
                     {matchError
@@ -299,15 +300,33 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               key={data.ouid}
               className="flex items-center justify-center gap-5 w-1/4 text-center"
             >
-              <p className="text-[25px] font-bold">{data.nickname}</p>
+              <p className="text-[20px] font-bold md:text-[25px]">
+                {data.nickname}
+              </p>
             </div>
           ))
         ) : (
           <div className="flex items-center justify-center gap-5 w-1/4 text-center">
-            <p className="text-[25px] font-bold">-</p>
+            <p className="text-[20px] font-bold md:text-[25px]">-</p>
           </div>
         )}
       </div>
+
+      {oppositeData.length ? (
+        oppositeData.map((data) => {
+          if (data.matchDetail.matchResult === "오류") {
+            return (
+              <div className="mt-[30px]">
+                <p className="text-center">데이터 오류</p>
+              </div>
+            );
+          }
+        })
+      ) : (
+        <div className="mt-[30px]">
+          <p className="text-center">데이터가 없습니다.</p>
+        </div>
+      )}
     </>
   );
 }

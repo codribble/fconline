@@ -140,7 +140,7 @@ export default function UserMatchList({ ouid }: IUserInfo) {
       </div>
 
       {matchRecord.length > 0 && isLoadedMatch ? (
-        <ul className="flex flex-wrap gap-y-[15px] gap-x-[50px]">
+        <ul className="flex flex-wrap sm:gap-y-[15px] sm:gap-x-[50px]">
           {matchRecord.map((id, i) => (
             <MatchItem
               key={i}
