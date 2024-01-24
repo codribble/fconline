@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IMatchData, IMatchInfo } from "../match_detail";
+import MatchDataChart from "./match_chart";
 
 export interface IResult {
   matchData: IMatchData;
@@ -22,6 +23,11 @@ export default function MatchResult({ matchData, ouid }: IResult) {
     setMyData(matchData.matchInfo.filter((info) => info.ouid === ouid));
     setOppositeData(matchData.matchInfo.filter((info) => info.ouid !== ouid));
   }, [matchData, ouid]);
+
+  console.log("myData");
+  console.log(myData);
+  console.log("oppositeData");
+  console.log(oppositeData);
 
   return (
     <>
@@ -88,60 +94,14 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             </div>
           ))}
         <div className="flex w-full md:w-1/3">
-          {myData.length &&
-            myData.map((data) => (
-              <div
-                key={data.ouid}
-                className="flex flex-col order-1 w-[calc((100%-150px)/2)] text-center md:order-0 md:w-[50px]"
-              >
-                <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
-                  {data.nickname}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.shoot.shootTotal}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.shoot.effectiveShootTotal}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.shoot.goalTotal !== 0 && data.shoot.shootTotal !== 0
-                    ? Math.floor(
-                        (data.shoot.goalTotal / data.shoot.shootTotal) * 100
-                      ) + "%"
-                    : "0%"}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {Math.floor(
-                    (data.pass.passSuccess / data.pass.passTry) * 100
-                  )}
-                  %
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.matchDetail.possession}%
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.matchDetail.cornerKick}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.defence.tackleSuccess}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.matchDetail.foul}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.matchDetail.offsideCount}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.matchDetail.yellowCards}
-                </p>
-                <p className="py-[15px] border-b border-solid border-white/20">
-                  {data.matchDetail.redCards}
-                </p>
-                <p className="py-[15px]">{data.matchDetail.injury}</p>
-              </div>
-            ))}
+          {myData.length && (
+            <MatchDataChart
+              matchData={myData}
+              order={0}
+            />
+          )}
 
-          <div className="flex flex-col flex-auto order-0 w-[150px] text-gray-400 text-center md:order-1 md:w-auto">
+          <div className="flex flex-col flex-auto order-0 w-[110px] text-sm text-gray-400 text-center md:order-1 md:w-auto md:text-base">
             <p className="py-[25px] border-b border-solid border-white/20 md:hidden">
               감독명
             </p>
@@ -182,86 +142,10 @@ export default function MatchResult({ matchData, ouid }: IResult) {
           </div>
 
           {oppositeData.length ? (
-            oppositeData.map((data) => {
-              const matchError = !["승", "무", "패"].includes(
-                data.matchDetail.matchResult
-              );
-
-              return (
-                <div
-                  key={data.ouid}
-                  className="flex flex-col order-2 w-[calc((100%-150px)/2)] text-center md:order-2 md:w-[50px]"
-                >
-                  <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
-                    {data.nickname}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.shoot.shootTotal}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.shoot.effectiveShootTotal}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : Math.floor(
-                          (data.shoot.goalTotal / data.shoot.shootTotal) * 100
-                        ) + "%"}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : Math.floor(
-                          (data.pass.passSuccess / data.pass.passTry) * 100
-                        ) + "%"}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.possession + "%"}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.cornerKick}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.defence.tackleSuccess}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.foul}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.offsideCount}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.yellowCards}
-                  </p>
-                  <p className="py-[15px] border-b border-solid border-white/20">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.redCards}
-                  </p>
-                  <p className="py-[15px]">
-                    {matchError
-                      ? data.matchDetail.matchResult
-                      : data.matchDetail.injury}
-                  </p>
-                </div>
-              );
-            })
+            <MatchDataChart
+              matchData={oppositeData}
+              order={1}
+            />
           ) : (
             <div className="flex flex-col order-2 w-[calc((100%-150px)/2)] text-center md:order-2 md:w-[50px]">
               <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
@@ -314,7 +198,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             </div>
           ))
         ) : (
-          <div className="flex items-center justify-center gap-5 w-1/4 text-center">
+          <div className="hidden items-center justify-center gap-5 w-1/4 text-center md:flex">
             <p className="font-bold text-[25px]">-</p>
           </div>
         )}
