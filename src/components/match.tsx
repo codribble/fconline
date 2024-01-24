@@ -24,7 +24,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
       try {
         const response = await fetch(
           `https://open.api.nexon.com/fconline/v1/match-detail?matchid=${matchId}`,
-          { headers }
+          { headers: headers }
         );
 
         if (response.ok) {
@@ -56,7 +56,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
   }, [matchId, ouid]);
 
   // console.log(matchData);
-  // console.log(matchData?.matchInfo);
+  // console.log(matchData.matchInfo);
 
   return matchData && isLoaded ? (
     <li className="w-full py-[15px] border-b border-b-white border-solid sm:p-0 sm:border-0">
@@ -73,10 +73,10 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
         className="block w-full"
       >
         <div className="flex flex-col items-center justify-between gap-[10px] sm:flex-row">
-          {matchData && matchData?.matchType < 200 ? (
+          {matchData && matchData.matchType < 200 ? (
             <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-[calc(100%-160px)]">
-              {matchData?.matchInfo &&
-                matchData?.matchInfo
+              {matchData.matchInfo &&
+                matchData.matchInfo
                   .filter((data) => data.ouid === ouid)
                   .map((data, i) => (
                     <div
@@ -99,7 +99,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   ))}
               <div className="flex items-center gap-[5px]">
                 {matchData.matchInfo &&
-                  matchData?.matchInfo
+                  matchData.matchInfo
                     .filter((data) => data.ouid === ouid)
                     .map((data, i) => (
                       <p
@@ -111,7 +111,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     ))}
                 <p>vs</p>
                 {matchData.matchInfo &&
-                  matchData?.matchInfo
+                  matchData.matchInfo
                     .filter((data) => data.ouid !== ouid)
                     .map((data, i) => (
                       <p
@@ -122,8 +122,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       </p>
                     ))}
               </div>
-              {matchData?.matchInfo &&
-                matchData?.matchInfo
+              {matchData.matchInfo &&
+                matchData.matchInfo
                   .filter((data) => data.ouid !== ouid)
                   .map((data, i) => (
                     <div
@@ -147,8 +147,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
             </div>
           ) : (
             <div className="flex items-center gap-[10px] sm:gap-[30px] w-full">
-              {matchData?.matchInfo &&
-                matchData?.matchInfo
+              {matchData.matchInfo &&
+                matchData.matchInfo
                   .filter((data) => data.ouid === ouid)
                   .map((data, i) => (
                     <div
@@ -171,8 +171,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   ))}
               <div className="flex items-center gap-[5px]">
                 <p className="text-xl font-bold">
-                  {matchData?.matchInfo &&
-                    matchData?.matchInfo
+                  {matchData.matchInfo &&
+                    matchData.matchInfo
                       .filter(
                         (data) =>
                           data.ouid === ouid &&
@@ -181,16 +181,16 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       )
                       .reduce(
                         (a, b) =>
-                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
+                          a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
                             ? a
                             : b,
                         {} as IMatchInfo
-                      )?.shoot?.goalTotalDisplay}
+                      ).shoot.goalTotalDisplay}
                 </p>
                 <p>vs</p>
                 <p className="text-xl font-bold">
-                  {matchData?.matchInfo &&
-                    matchData?.matchInfo
+                  {matchData.matchInfo &&
+                    matchData.matchInfo
                       .filter(
                         (data) =>
                           !data.matchDetail.matchResult.includes(myResult) ||
@@ -198,15 +198,15 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       )
                       .reduce(
                         (a, b) =>
-                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
+                          a.shoot.goalTotalDisplay > b.shoot.goalTotalDisplay
                             ? a
                             : b,
                         {} as IMatchInfo
-                      )?.shoot?.goalTotalDisplay}
+                      ).shoot.goalTotalDisplay}
                 </p>
               </div>
-              {matchData?.matchInfo &&
-                matchData?.matchInfo
+              {matchData.matchInfo &&
+                matchData.matchInfo
                   .filter(
                     (info) =>
                       !info.matchDetail.matchResult.includes(myResult) ||
@@ -240,7 +240,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
           )}
           <p className="flex justify-end w-full sm:w-[150px]">
             {moment(
-              moment.utc(moment.utc(matchData?.matchDate)).toDate()
+              moment.utc(moment.utc(matchData.matchDate)).toDate()
             ).format("YYYY-MM-DD HH:mm:ss")}
           </p>
         </div>

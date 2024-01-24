@@ -54,7 +54,7 @@ export default function UserBestTier({ ouid }: IUserInfo) {
 
       fetch(
         `https://open.api.nexon.com/fconline/v1/user/maxdivision?ouid=${ouid}`,
-        { headers }
+        { headers: headers }
       )
         .then((res) => res.json())
         .then((data) => {

@@ -151,7 +151,7 @@ export default function MatchDetail() {
     const fetchMatchData = async () => {
       await fetch(
         `https://open.api.nexon.com/fconline/v1/match-detail?matchid=${id}`,
-        { headers }
+        { headers: headers }
       )
         .then((res) => res.json())
         .then((data) => {

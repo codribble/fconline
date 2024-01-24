@@ -67,7 +67,7 @@ export default function Users() {
         fetch(
           `https://open.api.nexon.com/fconline/v1/user/basic?ouid=${data.ouid}`,
           {
-            headers,
+            headers: headers,
           }
         )
           .then((res) => res.json())

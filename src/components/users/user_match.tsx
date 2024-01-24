@@ -40,7 +40,7 @@ export default function UserMatchList({ ouid }: IUserInfo) {
             matchTypeData.map(async (type: IMatchType) => {
               const matchDataResponse = await fetch(
                 `https://open.api.nexon.com/fconline/v1/user/match?ouid=${ouid}&matchtype=${type.matchtype}`,
-                { headers }
+                { headers: headers }
               );
 
               if (matchDataResponse.ok) {
@@ -94,7 +94,7 @@ export default function UserMatchList({ ouid }: IUserInfo) {
     const matchRecordData = async () => {
       await fetch(
         `https://open.api.nexon.com/fconline/v1/user/match?ouid=${ouid}&matchtype=${selectedType}`,
-        { headers }
+        { headers: headers }
       )
         .then((res) => res.json())
         .then((data) => {
