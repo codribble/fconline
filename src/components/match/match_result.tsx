@@ -82,20 +82,21 @@ export default function MatchResult({ matchData, ouid }: IResult) {
           myData.map((data) => (
             <div
               key={data.ouid}
-              className="flex items-center justify-center gap-5 w-1/4 text-center"
+              className="hidden items-center justify-center gap-5 w-1/4 text-center md:flex"
             >
-              <p className="text-[20px] font-bold md:text-[25px]">
-                {data.nickname}
-              </p>
+              <p className="font-bold text-[25px]">{data.nickname}</p>
             </div>
           ))}
-        <div className="flex w-3/5 md:w-1/3">
+        <div className="flex w-full md:w-1/3">
           {myData.length &&
             myData.map((data) => (
               <div
                 key={data.ouid}
-                className="flex flex-col w-[50px] text-xs leading-none text-center md:text-base"
+                className="flex flex-col order-1 w-[calc((100%-150px)/2)] text-center md:order-0 md:w-[50px]"
               >
+                <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
+                  {data.nickname}
+                </p>
                 <p className="py-[15px] border-b border-solid border-white/20">
                   {data.shoot.shootTotal}
                 </p>
@@ -140,7 +141,10 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               </div>
             ))}
 
-          <div className="flex flex-col flex-auto text-xs leading-none text-gray-400 text-center md:text-base">
+          <div className="flex flex-col flex-auto order-0 w-[150px] text-gray-400 text-center md:order-1 md:w-auto">
+            <p className="py-[25px] border-b border-solid border-white/20 md:hidden">
+              감독명
+            </p>
             <p className="py-[15px] border-b border-solid border-white/20">
               슛
             </p>
@@ -186,8 +190,11 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               return (
                 <div
                   key={data.ouid}
-                  className="flex flex-col w-[50px] text-xs leading-none text-center md:text-base"
+                  className="flex flex-col order-2 w-[calc((100%-150px)/2)] text-center md:order-2 md:w-[50px]"
                 >
+                  <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
+                    {data.nickname}
+                  </p>
                   <p className="py-[15px] border-b border-solid border-white/20">
                     {matchError
                       ? data.matchDetail.matchResult
@@ -256,7 +263,10 @@ export default function MatchResult({ matchData, ouid }: IResult) {
               );
             })
           ) : (
-            <div className="flex flex-col w-[50px] text-center">
+            <div className="flex flex-col order-2 w-[calc((100%-150px)/2)] text-center md:order-2 md:w-[50px]">
+              <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
+                -
+              </p>
               <p className="py-[15px] border-b border-solid border-white/20">
                 -
               </p>
@@ -298,16 +308,14 @@ export default function MatchResult({ matchData, ouid }: IResult) {
           oppositeData.map((data) => (
             <div
               key={data.ouid}
-              className="flex items-center justify-center gap-5 w-1/4 text-center"
+              className="hidden items-center justify-center gap-5 w-1/4 text-center md:flex"
             >
-              <p className="text-[20px] font-bold md:text-[25px]">
-                {data.nickname}
-              </p>
+              <p className="font-bold text-[25px]">{data.nickname}</p>
             </div>
           ))
         ) : (
           <div className="flex items-center justify-center gap-5 w-1/4 text-center">
-            <p className="text-[20px] font-bold md:text-[25px]">-</p>
+            <p className="font-bold text-[25px]">-</p>
           </div>
         )}
       </div>
