@@ -5,9 +5,10 @@ export default function Footer() {
       className="py-[50px]"
     >
       <div className="w-full"></div>
-      <p className="text-center">
-        Copyright &copy; coDribble. All rights reserved. Data based on NEXON
-        Open API.
+      <p className="leading-6 text-center">
+        Copyright &copy; coDribble. All rights reserved.
+        <br />
+        Data based on NEXON Open API.
       </p>
     </footer>
   );

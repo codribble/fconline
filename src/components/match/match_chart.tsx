@@ -47,11 +47,9 @@ export default function MatchDataChart({ matchData, order }: IMatchChart) {
                 ? matchResult
                   ? "몰수" + data.matchDetail.matchResult
                   : "오류"
-                : data.shoot.goalTotal !== 0 && data.shoot.shootTotal !== 0
-                ? Math.floor(
+                : Math.floor(
                     (data.shoot.goalTotal / data.shoot.shootTotal) * 100
-                  )
-                : "0" + "%"}
+                  ) + "%"}
             </p>
             <p className="py-[15px] border-b border-solid border-white/20">
               {matchError &&
