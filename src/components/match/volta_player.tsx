@@ -3,6 +3,7 @@ import { IMatchInfo } from "../match_detail";
 import { IPlayerInfo, ISeasonInfo } from "../../routes/players";
 import { IPosition } from "../../routes/player_details";
 import PlayerThumbs from "../players/player_thumbs";
+import StrongLevel from "../players/player_grade";
 
 interface IVoltaPlayer {
   data: IMatchInfo;
@@ -122,19 +123,7 @@ export default function VoltaPlayer({ data, ouid }: IVoltaPlayer) {
                     </p>
                   ))}
                 <p className="text-center">
-                  <span
-                    className={`${
-                      p.spGrade > 1
-                        ? p.spGrade > 4
-                          ? p.spGrade > 7
-                            ? "bg-grade-gold text-grade-gold-title"
-                            : "bg-grade-silver text-grade-silver-title"
-                          : "bg-grade-bronze text-grade-bronze-title"
-                        : "bg-grade-normal text-grade-normal-title"
-                    } px-[10px] font-bold`}
-                  >
-                    {p.spGrade}
-                  </span>
+                  <StrongLevel level={p.spGrade} />
                 </p>
               </div>
             ))}
