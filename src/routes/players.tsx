@@ -201,8 +201,8 @@ export default function Players() {
         autoComplete="off"
       >
         <fieldset className="flex items-center gap-5">
-          <div className="relative flex w-full">
-            <div className="relate flex">
+          <div className="relative w-full">
+            <div className="relate flex w-full">
               <label
                 htmlFor="name"
                 className="hidden"
@@ -216,7 +216,7 @@ export default function Players() {
                 value={isAutoSearch ? autoKeywords : keywords}
                 onKeyUp={onKeyUp}
                 onChange={onKeywordChange}
-                className="w-[200px] px-2 py-2 text-black"
+                className="w-[calc(100%-60px)] px-2 py-2 text-black md:w-[200px]"
                 placeholder="선수명"
               />
               <input
@@ -226,7 +226,7 @@ export default function Players() {
               />
             </div>
             {isShowRelated && relatedKeywords?.length > 0 && (
-              <div className="overflow-hidden overflow-y-auto absolute top-full w-[200px] max-h-[300px] bg-gray-50 border border-solid border-black z-[1]">
+              <div className="overflow-hidden overflow-y-auto absolute top-full w-[calc(100%-60px)] max-h-[300px] bg-gray-50 border border-solid border-black z-[1]">
                 <ul
                   role="list"
                   ref={listRef}

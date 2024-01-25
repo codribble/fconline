@@ -58,7 +58,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
   // console.log(matchData);
   // console.log(matchData.matchInfo);
 
-  return matchData && isLoaded ? (
+  return isLoaded && matchData ? (
     <li className="w-full py-[15px] border-b border-b-white border-solid sm:p-0 sm:border-0">
       <Link
         to={`/match/${matchId}`}
@@ -74,7 +74,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
       >
         <div className="flex flex-col items-center justify-between gap-[10px] sm:flex-row">
           {matchData && matchData.matchType < 200 ? (
-            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-[calc(100%-160px)]">
+            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-auto">
               {matchData.matchInfo &&
                 matchData.matchInfo
                   .filter((data) => data.ouid === ouid)
@@ -104,7 +104,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     .map((data, i) => (
                       <p
                         key={i}
-                        className="text-xl font-bold"
+                        className="hidden text-xl font-bold sm:block"
                       >
                         {data.shoot?.goalTotalDisplay}
                       </p>
@@ -116,7 +116,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     .map((data, i) => (
                       <p
                         key={i}
-                        className="text-xl font-bold"
+                        className="hidden text-xl font-bold sm:block"
                       >
                         {data.shoot?.goalTotalDisplay}
                       </p>
@@ -146,7 +146,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   ))}
             </div>
           ) : (
-            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-[calc(100%-160px)]">
+            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-auto">
               {matchData.matchInfo &&
                 matchData.matchInfo
                   .filter((data) => data.ouid === ouid)
@@ -170,7 +170,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                     </div>
                   ))}
               <div className="flex items-center gap-[5px]">
-                <p className="text-xl font-bold">
+                <p className="hidden text-xl font-bold sm:block">
                   {matchData.matchInfo &&
                     matchData.matchInfo
                       .filter(
@@ -188,7 +188,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                       ).shoot?.goalTotalDisplay}
                 </p>
                 <p>vs</p>
-                <p className="text-xl font-bold">
+                <p className="hidden text-xl font-bold sm:block">
                   {matchData.matchInfo &&
                     matchData.matchInfo
                       .filter(
@@ -238,7 +238,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
                   }, [])}
             </div>
           )}
-          <p className="flex justify-end w-full sm:w-[150px]">
+          <p className="flex justify-end w-full sm:w-auto">
             {moment(
               moment.utc(moment.utc(matchData.matchDate)).toDate()
             ).format("YYYY-MM-DD HH:mm:ss")}

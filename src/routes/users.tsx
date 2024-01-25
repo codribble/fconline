@@ -105,7 +105,7 @@ export default function Users() {
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value.trim())}
-            className="w-[200px] px-2 py-2 text-black"
+            className="w-[calc(100%-60px)] px-2 py-2 text-black md:w-[200px]"
             placeholder="감독명"
           />
           <input

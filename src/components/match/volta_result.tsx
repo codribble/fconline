@@ -3,6 +3,7 @@ import { IPlayerInfo, ISeasonInfo } from "../../routes/players";
 import { IPosition } from "../../routes/player_details";
 import { IMatchInfo } from "../match_detail";
 import { IResult } from "./match_result";
+import PlayerThumbs from "../players/player_thumbs";
 
 export default function VoltaResult({ matchData, ouid }: IResult) {
   const [allPlayers, setAllPlayers] = useState<IPlayerInfo[]>([]);
@@ -40,29 +41,6 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
       .filter((info: IMatchInfo) => info.ouid === ouid)
       .map((data: IMatchInfo) => setMyResult(data.matchDetail.matchResult));
   }, [matchData, ouid]);
-
-  const onThumbsError = (e: React.SyntheticEvent) => {
-    if (!(e.target instanceof HTMLImageElement)) return;
-
-    const spId = e.target.dataset.spid;
-    const pId = Number(spId?.substring(3));
-
-    switch (e.target.src) {
-      default:
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${spId}.png`:
-        e.target.src = `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`;
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${pId}.png`:
-        e.target.src = `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${spId}.png`;
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${spId}.png`:
-        e.target.src = `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`;
-        break;
-      case `https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/players/p${pId}.png`:
-        e.target.src = `${import.meta.env.BASE_URL}assets/images/no_thumbs.png`;
-        break;
-    }
-  };
 
   return (
     <>
@@ -153,11 +131,11 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                             (p) =>
                               p.spPosition > 0
                                 ? p.spPosition >= 1 && p.spPosition < 9
-                                  ? " bg-[#1a338d]"
+                                  ? " bg-position-df"
                                   : p.spPosition >= 9 && p.spPosition < 20
-                                  ? " bg-[#5aaa71]"
+                                  ? " bg-position-mf"
                                   : p.spPosition >= 20 && p.spPosition < 28
-                                  ? " bg-[#ee0045]"
+                                  ? " bg-position-fw"
                                   : ""
                                 : ""
                           )}${
@@ -208,11 +186,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                   .filter((data) => data.id === p.spId)
                                   .map((data) => (
                                     <div key={data.id}>
-                                      <img
-                                        data-spid={data.id}
-                                        src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
-                                        onError={onThumbsError}
-                                        width="80px"
+                                      <PlayerThumbs
+                                        spId={data.id}
+                                        name={data.name}
+                                        width="w-[80px]"
                                       />
                                     </div>
                                   ))
@@ -248,10 +225,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                         p.spGrade > 1
                                           ? p.spGrade > 4
                                             ? p.spGrade > 7
-                                              ? "bg-[#f3cf3e] text-[#634e00]"
-                                              : "bg-[#d3d6dc] text-[#5c626c]"
-                                            : "bg-[#d38763] text-[#733c2a]"
-                                          : "bg-[#4d5055] text-[#c6c6c6]"
+                                              ? "bg-grade-gold text-grade-gold-title"
+                                              : "bg-grade-silver text-grade-silver-title"
+                                            : "bg-grade-bronze text-grade-bronze-title"
+                                          : "bg-grade-normal text-grade-normal-title"
                                       } px-[10px] font-bold`}
                                     >
                                       {p.spGrade}
@@ -268,10 +245,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                             className="flex"
                           >
                             <div
-                              className={`flex w-[120px] mr-[5px] text-xl font-bold text-center${
+                              className={`flex w-[120px] mr-[5px] text-xl font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -281,10 +258,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -292,10 +269,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -303,10 +280,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -314,10 +291,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -325,10 +302,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -336,10 +313,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -347,10 +324,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -385,11 +362,11 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                             (p) =>
                               p.spPosition > 0
                                 ? p.spPosition >= 1 && p.spPosition < 9
-                                  ? " bg-[#1a338d]"
+                                  ? " bg-position-df"
                                   : p.spPosition >= 9 && p.spPosition < 20
-                                  ? " bg-[#5aaa71]"
+                                  ? " bg-position-mf"
                                   : p.spPosition >= 20 && p.spPosition < 28
-                                  ? " bg-[#ee0045]"
+                                  ? " bg-position-fw"
                                   : ""
                                 : ""
                           )}${
@@ -440,11 +417,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                   .filter((data) => data.id === p.spId)
                                   .map((data) => (
                                     <div key={data.id}>
-                                      <img
-                                        data-spid={data.id}
-                                        src={`https://fco.dn.nexoncdn.co.kr/live/externalAssets/common/playersAction/p${data.id}.png`}
-                                        onError={onThumbsError}
-                                        width="80px"
+                                      <PlayerThumbs
+                                        spId={data.id}
+                                        name={data.name}
+                                        width="w-[80px]"
                                       />
                                     </div>
                                   ))
@@ -480,10 +456,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                                         p.spGrade > 1
                                           ? p.spGrade > 4
                                             ? p.spGrade > 7
-                                              ? "bg-[#f3cf3e] text-[#634e00]"
-                                              : "bg-[#d3d6dc] text-[#5c626c]"
-                                            : "bg-[#d38763] text-[#733c2a]"
-                                          : "bg-[#4d5055] text-[#c6c6c6]"
+                                              ? "bg-grade-gold text-grade-gold-title"
+                                              : "bg-grade-silver text-grade-silver-title"
+                                            : "bg-grade-bronze text-grade-bronze-title"
+                                          : "bg-grade-normal text-grade-normal-title"
                                       } px-[10px] font-bold`}
                                     >
                                       {p.spGrade}
@@ -500,10 +476,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                             className="flex"
                           >
                             <div
-                              className={`flex w-[120px] mr-[5px] text-xl font-bold text-center${
+                              className={`flex w-[120px] mr-[5px] text-xl font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -513,10 +489,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -524,10 +500,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -535,10 +511,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -546,10 +522,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -557,10 +533,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -568,10 +544,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
@@ -579,10 +555,10 @@ export default function VoltaResult({ matchData, ouid }: IResult) {
                               </div>
                             </div>
                             <div
-                              className={`flex w-[70px] font-bold text-center${
+                              className={`flex w-[70px] font-bold text-center ${
                                 data.ouid === ouid
-                                  ? " bg-[#eff134] text-black"
-                                  : " bg-white/10 group-hover:bg-[#d4d0dd] group-hover:text-black"
+                                  ? "bg-[#eff134] text-black"
+                                  : "bg-white/10 group-hover:bg-white/70 group-hover:text-black"
                               }`}
                             >
                               <div className="flex items-center justify-center w-full h-full">
