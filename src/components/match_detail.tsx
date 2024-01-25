@@ -16,7 +16,7 @@ export interface IMatchInfo {
   ouid: string;
   nickname: string;
   shoot: IShoot;
-  shootDetail: IShootDetail[];
+  shootDetail: IShootDetail;
   matchDetail: IMatchDetail;
   pass: IPass;
   defence: IDefence;

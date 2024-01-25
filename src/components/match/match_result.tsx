@@ -24,14 +24,9 @@ export default function MatchResult({ matchData, ouid }: IResult) {
     setOppositeData(matchData.matchInfo.filter((info) => info.ouid !== ouid));
   }, [matchData, ouid]);
 
-  console.log("myData");
-  console.log(myData);
-  console.log("oppositeData");
-  console.log(oppositeData);
-
   return (
     <>
-      <div className="flex items-end justify-between w-1/3 mx-auto mb-[50px] text-6xl text-center md:text-8xl">
+      <div className="flex items-end justify-evenly w-full mx-auto mb-[50px] text-6xl text-center md:justify-between md:w-1/3 md:text-8xl">
         {myData.length &&
           myData.map((data) => (
             <p
@@ -94,14 +89,9 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             </div>
           ))}
         <div className="flex w-full md:w-1/3">
-          {myData.length && (
-            <MatchDataChart
-              matchData={myData}
-              order={0}
-            />
-          )}
+          <MatchDataChart matchData={myData} />
 
-          <div className="flex flex-col flex-auto order-0 w-[110px] text-sm text-gray-400 text-center md:order-1 md:w-auto md:text-base">
+          <div className="flex flex-col flex-auto w-[110px] text-sm text-gray-400 text-center md:w-auto md:text-base">
             <p className="py-[25px] border-b border-solid border-white/20 md:hidden">
               감독명
             </p>
@@ -141,52 +131,7 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             <p className="py-[15px]">부상</p>
           </div>
 
-          {oppositeData.length ? (
-            <MatchDataChart
-              matchData={oppositeData}
-              order={1}
-            />
-          ) : (
-            <div className="flex flex-col order-2 w-[calc((100%-150px)/2)] text-center md:order-2 md:w-[50px]">
-              <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px] border-b border-solid border-white/20">
-                -
-              </p>
-              <p className="py-[15px]">-</p>
-            </div>
-          )}
+          <MatchDataChart matchData={oppositeData} />
         </div>
         {oppositeData.length ? (
           oppositeData.map((data) => (
@@ -203,22 +148,6 @@ export default function MatchResult({ matchData, ouid }: IResult) {
           </div>
         )}
       </div>
-
-      {oppositeData.length ? (
-        oppositeData.map((data) => {
-          if (data.matchDetail.matchResult === "오류") {
-            return (
-              <div className="mt-[30px]">
-                <p className="text-center">데이터 오류</p>
-              </div>
-            );
-          }
-        })
-      ) : (
-        <div className="mt-[30px]">
-          <p className="text-center">데이터가 없습니다.</p>
-        </div>
-      )}
     </>
   );
 }
