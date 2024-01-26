@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IMatchInfo } from "../match_detail";
 import { IPlayerInfo, ISeasonInfo } from "../../routes/players";
-import { IPosition } from "../../routes/player_details";
+// import { IPosition } from "../../routes/player_details";
 import PlayerThumbs from "../players/player_thumbs";
 import StrongLevel from "../players/player_grade";
 
@@ -13,7 +13,8 @@ interface IVoltaPlayer {
 export default function VoltaPlayer({ data, ouid }: IVoltaPlayer) {
   const [allPlayers, setAllPlayers] = useState<IPlayerInfo[]>([]);
   const [allSeason, setAllSeason] = useState<ISeasonInfo[]>([]);
-  const [allPosition, setAllPosition] = useState<IPosition[]>([]);
+  // const [allPosition, setAllPosition] = useState<IPosition[]>([]);
+  const [position, setPosition] = useState("");
 
   useEffect(() => {
     fetch("https://open.api.nexon.com/static/fconline/meta/spid.json")
@@ -30,28 +31,41 @@ export default function VoltaPlayer({ data, ouid }: IVoltaPlayer) {
         console.error("Error fetching season data: ", error);
       });
 
-    fetch("https://open.api.nexon.com/static/fconline/meta/spposition.json")
+    /* fetch("https://open.api.nexon.com/static/fconline/meta/spposition.json")
       .then((res) => res.json())
       .then((data) => setAllPosition(data))
       .catch((error) => {
         console.error("Error fetching position data: ", error);
-      });
+      }); */
   }, []);
+
+  useEffect(() => {
+    data.player.map((player) => {
+      if (player.spPosition > 19) setPosition("fw");
+      else if (player.spPosition > 8) setPosition("mf");
+      else if (player.spPosition > 0) setPosition("df");
+      else setPosition("");
+
+      /* setPosition(
+        player.spPosition > 0
+          ? player.spPosition >= 1 && player.spPosition < 9
+            ? "df"
+            : player.spPosition >= 9 && player.spPosition < 20
+            ? "mf"
+            : player.spPosition >= 20 && player.spPosition < 28
+            ? "fw"
+            : ""
+          : ""
+      ); */
+    });
+  }, [data]);
 
   return (
     <div className="flex justify-between gap-[5px] min-h-[80px] group">
       <div
-        className={`flex-auto pl-[25px] pr-[15px]${data.player.map((p) =>
-          p.spPosition > 0
-            ? p.spPosition >= 1 && p.spPosition < 9
-              ? " bg-position-df"
-              : p.spPosition >= 9 && p.spPosition < 20
-              ? " bg-position-mf"
-              : p.spPosition >= 20 && p.spPosition < 28
-              ? " bg-position-fw"
-              : ""
-            : ""
-        )}${data.matchDetail.matchEndType > 1 ? " opacity-50" : ""}`}
+        className={`flex-auto pl-[25px] pr-[15px] bg-position-${position} ${
+          data.matchDetail.matchEndType > 1 ? "opacity-50" : ""
+        }`}
       >
         <div className="flex items-center justify-between h-full">
           <div className="flex flex-col gap-[5px]">
@@ -106,22 +120,7 @@ export default function VoltaPlayer({ data, ouid }: IVoltaPlayer) {
                 key={p.spId}
                 className="flex flex-col items-center gap-[10px]"
               >
-                {allPosition
-                  .filter((pos) => pos.spposition === p.spPosition)
-                  .map((data, i) => (
-                    <p
-                      key={i}
-                      className="text-lg font-bold"
-                    >
-                      {data.spposition > 0
-                        ? data.spposition >= 1 && data.spposition < 9
-                          ? "DF"
-                          : data.spposition >= 9 && data.spposition < 20
-                          ? "MF"
-                          : "FW"
-                        : "GK"}
-                    </p>
-                  ))}
+                <p className="text-lg font-bold">{position.toUpperCase()}</p>
                 <p className="text-center">
                   <StrongLevel level={p.spGrade} />
                 </p>
