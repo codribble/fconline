@@ -37,6 +37,7 @@ export default function Player({ id, name }: IPlayerInfo) {
           <div className="flex flex-col gap-3">
             <div className={`relative w-[80px]`}>
               <PlayerThumbs
+                key={id}
                 spId={id}
                 name={name}
               />

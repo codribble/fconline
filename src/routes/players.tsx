@@ -226,7 +226,7 @@ export default function Players() {
               />
             </div>
             {isShowRelated && relatedKeywords?.length > 0 && (
-              <div className="overflow-hidden overflow-y-auto absolute top-full w-[calc(100%-60px)] max-h-[300px] bg-gray-50 border border-solid border-black z-[1]">
+              <div className="overflow-hidden overflow-y-auto absolute top-full w-[calc(100%-60px)] max-h-[300px] bg-gray-50 border border-solid border-black z-[1] md:w-[200px]">
                 <ul
                   role="list"
                   ref={listRef}

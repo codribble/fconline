@@ -44,19 +44,7 @@ export default function VoltaPlayer({ data, ouid }: IVoltaPlayer) {
       if (player.spPosition > 19) setPosition("fw");
       else if (player.spPosition > 8) setPosition("mf");
       else if (player.spPosition > 0) setPosition("df");
-      else setPosition("");
-
-      /* setPosition(
-        player.spPosition > 0
-          ? player.spPosition >= 1 && player.spPosition < 9
-            ? "df"
-            : player.spPosition >= 9 && player.spPosition < 20
-            ? "mf"
-            : player.spPosition >= 20 && player.spPosition < 28
-            ? "fw"
-            : ""
-          : ""
-      ); */
+      else setPosition("gk");
     });
   }, [data]);
 

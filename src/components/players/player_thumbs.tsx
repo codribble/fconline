@@ -44,7 +44,7 @@ export default function PlayerThumbs({ spId, name, width }: IPlayerThumbs) {
           src={thumbs}
           alt={name}
           onError={onError}
-          className={width ? width : "w-full"}
+          className={width ? width : "max-w-full"}
         />
       )}
     </>
