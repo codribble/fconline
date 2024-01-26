@@ -1,6 +1,7 @@
 import { useEffect, /* useRef, */ useState } from "react";
 import { IUserInfo } from "../../routes/users";
 import MatchItem from "../match";
+import Pagination from "./../pagination";
 // import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 // import { EffectFade, Pagination, A11y } from "swiper/modules";
 // import "swiper/css";
@@ -19,6 +20,10 @@ export default function UserMatchList({ ouid }: IUserInfo) {
   const [matchRecord, setMatchRecord] = useState<string[]>([]);
   // const swiperRef = useRef<SwiperRef>(null);
   // const storageType = sessionStorage.getItem("SelectedMatchType");
+  const [matchTotal, setMatchTotal] = useState(1);
+  const [matchPage, setMatchPage] = useState(1);
+  const matchLimit = 20;
+  const matchOffset = (matchPage - 1) * matchLimit;
 
   useEffect(() => {
     const storageType = sessionStorage.getItem("SelectedMatchType");
@@ -99,6 +104,7 @@ export default function UserMatchList({ ouid }: IUserInfo) {
         .then((res) => res.json())
         .then((data) => {
           setMatchRecord(data);
+          setMatchTotal(data.length);
           // sessionStorage.setItem("MatchRecord", JSON.stringify(data));
         })
         .catch((error) =>
@@ -127,6 +133,7 @@ export default function UserMatchList({ ouid }: IUserInfo) {
                   "SelectedMatchType",
                   match.matchtype.toString()
                 );
+                setMatchPage(1);
               }}
               className={`w-auto h-auto p-2 ${
                 selectedType === match.matchtype
@@ -141,19 +148,28 @@ export default function UserMatchList({ ouid }: IUserInfo) {
 
       {matchRecord.length > 0 && isLoadedMatch ? (
         <ul className="flex flex-wrap sm:gap-y-[15px] sm:gap-x-[50px]">
-          {matchRecord.map((id, i) => (
-            <MatchItem
-              key={i}
-              matchId={id}
-              ouid={ouid}
-            />
-          ))}
+          {matchRecord
+            .slice(matchOffset, matchOffset + matchLimit)
+            .map((id, i) => (
+              <MatchItem
+                key={i}
+                matchId={id}
+                ouid={ouid}
+              />
+            ))}
         </ul>
       ) : (
         <div className="py-[30px] text-center">
           <p>매치 기록을 조회중...</p>
         </div>
       )}
+
+      <Pagination
+        total={matchTotal}
+        limit={matchLimit}
+        page={matchPage}
+        setPage={setMatchPage}
+      />
     </>
   );
 }
