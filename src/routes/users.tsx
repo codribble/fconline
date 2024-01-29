@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import UserBestTier from "../components/users/user_tier";
 import UserMatchList from "../components/users/user_match";
 import { useNavigationType } from "react-router-dom";
-// import UserTrade from "../components/users/user_trade";
+import UserTrade from "../components/users/user_trade";
 
 export interface IUserInfo {
   ouid: string;
@@ -142,7 +142,7 @@ export default function Users() {
                 <UserMatchList {...user} />
               </div>
 
-              {/* user.ouid === "cbb7a30a1f99de28ad2ae118fa60eef5" && (
+              {user.ouid === "cbb7a30a1f99de28ad2ae118fa60eef5" && (
                 <div className="w-full mt-[50px]">
                   <p className="block mb-[20px]">
                     <strong className="font-bold text-xl">
@@ -153,7 +153,7 @@ export default function Users() {
 
                   <UserTrade {...user} />
                 </div>
-              ) */}
+              )}
             </div>
           </div>
         ) : (
