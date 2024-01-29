@@ -239,7 +239,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
             </div>
           )}
           <p className="flex justify-end w-full sm:w-auto">
-            {momentDate(matchData.matchDate, "YYYY-MM-DD HH:mm:ss")}
+            {momentDate(matchData.matchDate)}
           </p>
         </div>
       </Link>
