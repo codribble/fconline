@@ -38,18 +38,15 @@ export default function Trade({ tradeDate, spid, grade, value }: ITrade) {
   }, [allPlayer, spid]);
 
   useEffect(() => {
-    setIsLoading(false);
-  }, [season, player]);
+    if (player && season) setIsLoading(false);
+  }, [player, season]);
   // console.log(player);
 
   return isLoading ? (
-    <li>거래 내역 조회중...</li>
+    <li>데이터 불러오는 중...</li>
   ) : (
     <li className="flex items-center justify-between py-[5px]">
-      <p className="w-[200px] px-[10px] text-center">
-        {momentDate(tradeDate, "YYYY.MM.DD HH:mm")}
-      </p>
-      <div className="flex items-center justify-start gap-[10px] w-[calc(100%-500px)] px-[10px]">
+      <div className="flex items-center gap-[10px] w-1/2">
         <div className="flex gap-[5px]">
           <img
             src={season?.seasonImg}
@@ -58,13 +55,10 @@ export default function Trade({ tradeDate, spid, grade, value }: ITrade) {
           />
           <p>{player?.name}</p>
         </div>
-      </div>
-      <p className="w-[100px] px-[10px] text-center">
         <StrongLevel level={grade} />
-      </p>
-      <p className="w-[200px] px-[10px] text-center">
-        {value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-      </p>
+      </div>
+      <p>{value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
+      <p>{momentDate(tradeDate, "YYYY.MM.DD HH:mm")}</p>
     </li>
   );
 }

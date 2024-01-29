@@ -12,6 +12,7 @@ export interface ITrade {
 }
 
 export default function UserTrade({ ouid }: IUserInfo) {
+  const [isLoading, setIsLoading] = useState(true);
   const [trade, setTrade] = useState<ITrade[]>([]);
   const [tradeType, setTradeType] = useState("buy");
   const [tradeTotal, setTradeTotal] = useState(1);
@@ -33,6 +34,7 @@ export default function UserTrade({ ouid }: IUserInfo) {
         .then((data) => {
           setTrade(data);
           setTradeTotal(data.length);
+          setIsLoading(false);
         });
     }
   }, [tradeOffset, ouid, tradeType]);
@@ -55,7 +57,7 @@ export default function UserTrade({ ouid }: IUserInfo) {
             setTradePage(1);
           }}
         >
-          Buy
+          구매
         </button>
         <button
           className={`min-w-[50px] p-2 rounded${
@@ -68,41 +70,26 @@ export default function UserTrade({ ouid }: IUserInfo) {
             setTradePage(1);
           }}
         >
-          Sell
+          판매
         </button>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between py-[10px] border-solid border-t-2 border-b-[1px] border-t-white border-b-white">
-          <div className="w-[200px] text-center">
-            <p>{tradeType === "buy" ? "구매" : "판매"} 일시</p>
-          </div>
-          <div className="w-[calc(100%-500px)] text-center">
-            <p>{tradeType === "buy" ? "구매" : "판매"}선수</p>
-          </div>
-          <div className="w-[100px] text-center">
-            <p>강화등급</p>
-          </div>
-          <div className="w-[200px] text-center">
-            <p>{tradeType === "buy" ? "구매" : "판매"} 가치(BP)</p>
-          </div>
-        </div>
-
-        <ul className="flex flex-col gap-[10px] py-[10px]">
-          {trade && trade.length ? (
-            trade.slice(tradeOffset, tradeOffset + tradeLimit).map((data) => (
-              <Trade
-                key={data.saleSn}
-                {...data}
-              />
-            ))
-          ) : (
-            <li className="py-[30px] text-center">
-              <p>{tradeType === "buy" ? "구입" : "판매"} 내역이 없습니다.</p>
-            </li>
-          )}
-        </ul>
-      </div>
+      <ul className="flex flex-col gap-[10px] py-[10px]">
+        {isLoading ? (
+          <li className="w-full py-[30px] text-center">거래 내역 조회중...</li>
+        ) : trade && trade.length ? (
+          trade.slice(tradeOffset, tradeOffset + tradeLimit).map((data) => (
+            <Trade
+              key={data.saleSn}
+              {...data}
+            />
+          ))
+        ) : (
+          <li className="py-[30px] text-center">
+            <p>{tradeType === "buy" ? "구입" : "판매"} 내역이 없습니다.</p>
+          </li>
+        )}
+      </ul>
 
       <Pagination
         total={tradeTotal}

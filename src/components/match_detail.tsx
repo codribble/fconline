@@ -182,7 +182,8 @@ export default function MatchDetail() {
       ) : (
         <>
           <p className="text-center">
-            {momentDate(matchData!.matchDate, "YYYY년 MM월 DD일 HH시 mm분")}
+            {matchData?.matchDate &&
+              momentDate(matchData.matchDate, "YYYY년 MM월 DD일 HH시 mm분")}
           </p>
 
           <div className="mt-[20px]">

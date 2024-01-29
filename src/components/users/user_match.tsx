@@ -160,7 +160,7 @@ export default function UserMatchList({ ouid }: IUserInfo) {
         </ul>
       ) : (
         <div className="py-[30px] text-center">
-          <p>매치 기록을 조회중...</p>
+          <p>매치 기록 조회중...</p>
         </div>
       )}
 

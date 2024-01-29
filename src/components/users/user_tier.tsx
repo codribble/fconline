@@ -16,6 +16,7 @@ export interface IDivisionType {
 }
 
 export default function UserBestTier({ ouid }: IUserInfo) {
+  const [isLoading, setIsLoading] = useState(true);
   const [bestTier, setBestTier] = useState<IBestTier[]>([]); // 유저의 역대 최고 등급 달성 데이터
   const [matchType, setMatchType] = useState<IMatchType[]>([]); // 모든 매치 데이터
   const [divisionType, setDivisionType] = useState<IDivisionType[]>([]); // 모든 등급 데이터
@@ -94,6 +95,7 @@ export default function UserBestTier({ ouid }: IUserInfo) {
 
           setBestTier(data);
           // sessionStorage.setItem("BestTier", JSON.stringify(data));
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching tier data: ", error);
@@ -101,20 +103,17 @@ export default function UserBestTier({ ouid }: IUserInfo) {
     }
   }, [ouid, divisionType, matchType, voltaDivisionType]);
 
-  return (
-    <>
-      <ul
-        role="list"
-        className="flex flex-wrap gap-[20px] w-full"
-      >
-        {bestTier &&
-          bestTier.map((data) => (
-            <Tier
-              key={data.matchType}
-              {...data}
-            />
-          ))}
-      </ul>
-    </>
+  return isLoading ? (
+    <div className="py-[30px] text-center">등급 조회중...</div>
+  ) : (
+    <ul className="flex flex-wrap gap-[20px] w-full">
+      {bestTier &&
+        bestTier.map((data) => (
+          <Tier
+            key={data.matchType}
+            {...data}
+          />
+        ))}
+    </ul>
   );
 }

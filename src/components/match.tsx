@@ -11,7 +11,7 @@ export interface IMatchItem {
 
 export default function MatchItem({ matchId, ouid }: IMatchItem) {
   const navigate = useNavigate();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [matchData, setMatchData] = useState<IMatchData>();
   const [myResult, setMyResult] = useState("");
 
@@ -36,8 +36,6 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
             .map((data: IMatchInfo) =>
               setMyResult(data.matchDetail.matchResult)
             );
-
-          setIsLoaded(true);
         } else {
           if (retryCount > 0) {
             fetchMatchData(retryCount - 1);
@@ -47,6 +45,8 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
             );
           }
         }
+
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching match data:", error);
       }
@@ -58,195 +58,199 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
   // console.log(matchData);
   // console.log(matchData.matchInfo);
 
-  return isLoaded && matchData ? (
-    <li className="w-full py-[15px] border-b border-b-white border-solid sm:p-0 sm:border-0">
-      <Link
-        to={`/match/${matchId}`}
-        onClick={(e) => {
-          e.preventDefault();
-          navigate(`/match/${matchId}`, {
-            state: {
-              ouid: ouid,
-            },
-          });
-        }}
-        className="block w-full"
-      >
-        <div className="flex flex-col items-center justify-between gap-[10px] sm:flex-row">
-          {matchData && matchData.matchType < 200 ? (
-            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-auto">
-              {matchData.matchInfo &&
-                matchData.matchInfo
-                  .filter((data) => data.ouid === ouid)
-                  .map((data, i) => (
-                    <div
-                      key={i}
-                      className="flex gap-[10px]"
-                    >
-                      <p
-                        className={`${
-                          data.matchDetail.matchResult.includes("승")
-                            ? "text-indigo-600"
-                            : data.matchDetail.matchResult.includes("패")
-                            ? "text-red-600"
-                            : "text-yellow-600"
-                        } font-bold`}
-                      >
-                        {data.matchDetail.matchResult}
-                      </p>
-                      <p>{data.nickname}</p>
-                    </div>
-                  ))}
-              <div className="flex items-center gap-[5px]">
+  return isLoading ? (
+    <li className="w-full">
+      <p>데이터 불러오는 중...</p>
+    </li>
+  ) : (
+    matchData && (
+      <li className="w-full py-[15px] border-b border-b-white border-solid sm:p-0 sm:border-0">
+        <Link
+          to={`/match/${matchId}`}
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(`/match/${matchId}`, {
+              state: {
+                ouid: ouid,
+              },
+            });
+          }}
+          className="block w-full"
+        >
+          <div className="flex flex-col items-center justify-between gap-[10px] sm:flex-row">
+            {matchData && matchData.matchType < 200 ? (
+              <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-auto">
                 {matchData.matchInfo &&
                   matchData.matchInfo
                     .filter((data) => data.ouid === ouid)
                     .map((data, i) => (
-                      <p
+                      <div
                         key={i}
-                        className="hidden text-xl font-bold sm:block"
+                        className="flex gap-[10px]"
                       >
-                        {data.shoot?.goalTotalDisplay}
-                      </p>
+                        <p
+                          className={`${
+                            data.matchDetail.matchResult.includes("승")
+                              ? "text-indigo-600"
+                              : data.matchDetail.matchResult.includes("패")
+                              ? "text-red-600"
+                              : "text-yellow-600"
+                          } font-bold`}
+                        >
+                          {data.matchDetail.matchResult}
+                        </p>
+                        <p>{data.nickname}</p>
+                      </div>
                     ))}
-                <p>vs</p>
+                <div className="flex items-center gap-[5px]">
+                  {matchData.matchInfo &&
+                    matchData.matchInfo
+                      .filter((data) => data.ouid === ouid)
+                      .map((data, i) => (
+                        <p
+                          key={i}
+                          className="hidden text-xl font-bold sm:block"
+                        >
+                          {data.shoot?.goalTotalDisplay}
+                        </p>
+                      ))}
+                  <p>vs</p>
+                  {matchData.matchInfo &&
+                    matchData.matchInfo
+                      .filter((data) => data.ouid !== ouid)
+                      .map((data, i) => (
+                        <p
+                          key={i}
+                          className="hidden text-xl font-bold sm:block"
+                        >
+                          {data.shoot?.goalTotalDisplay}
+                        </p>
+                      ))}
+                </div>
                 {matchData.matchInfo &&
                   matchData.matchInfo
                     .filter((data) => data.ouid !== ouid)
                     .map((data, i) => (
-                      <p
+                      <div
                         key={i}
-                        className="hidden text-xl font-bold sm:block"
+                        className="flex gap-[10px]"
                       >
-                        {data.shoot?.goalTotalDisplay}
-                      </p>
+                        <p>{data.nickname}</p>
+                        <p
+                          className={`${
+                            data.matchDetail.matchResult.includes("승")
+                              ? "text-indigo-600"
+                              : data.matchDetail.matchResult.includes("패")
+                              ? "text-red-600"
+                              : "text-yellow-600"
+                          } font-bold`}
+                        >
+                          {data.matchDetail.matchResult}
+                        </p>
+                      </div>
                     ))}
               </div>
-              {matchData.matchInfo &&
-                matchData.matchInfo
-                  .filter((data) => data.ouid !== ouid)
-                  .map((data, i) => (
-                    <div
-                      key={i}
-                      className="flex gap-[10px]"
-                    >
-                      <p>{data.nickname}</p>
-                      <p
-                        className={`${
-                          data.matchDetail.matchResult.includes("승")
-                            ? "text-indigo-600"
-                            : data.matchDetail.matchResult.includes("패")
-                            ? "text-red-600"
-                            : "text-yellow-600"
-                        } font-bold`}
+            ) : (
+              <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-auto">
+                {matchData.matchInfo &&
+                  matchData.matchInfo
+                    .filter((data) => data.ouid === ouid)
+                    .map((data, i) => (
+                      <div
+                        key={i}
+                        className="flex gap-[10px]"
                       >
-                        {data.matchDetail.matchResult}
-                      </p>
-                    </div>
-                  ))}
-            </div>
-          ) : (
-            <div className="flex items-center gap-[10px] w-full sm:gap-[30px] sm:w-auto">
-              {matchData.matchInfo &&
-                matchData.matchInfo
-                  .filter((data) => data.ouid === ouid)
-                  .map((data, i) => (
-                    <div
-                      key={i}
-                      className="flex gap-[10px]"
-                    >
-                      <p
-                        className={`${
-                          data.matchDetail.matchResult.includes("승")
-                            ? "text-indigo-600"
-                            : data.matchDetail.matchResult.includes("패")
-                            ? "text-red-600"
-                            : "text-yellow-600"
-                        } font-bold`}
-                      >
-                        {data.matchDetail.matchResult}
-                      </p>
-                      <p>우리팀</p>
-                    </div>
-                  ))}
-              <div className="flex items-center gap-[5px]">
-                <p className="hidden text-xl font-bold sm:block">
-                  {matchData.matchInfo &&
-                    matchData.matchInfo
-                      .filter(
-                        (data) =>
-                          data.ouid === ouid &&
-                          (data.matchDetail.matchResult.includes(myResult) ||
-                            data.matchDetail.matchResult.includes("무"))
-                      )
-                      .reduce(
-                        (a, b) =>
-                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
-                            ? a
-                            : b,
-                        {} as IMatchInfo
-                      ).shoot?.goalTotalDisplay}
-                </p>
-                <p>vs</p>
-                <p className="hidden text-xl font-bold sm:block">
-                  {matchData.matchInfo &&
-                    matchData.matchInfo
-                      .filter(
-                        (data) =>
-                          !data.matchDetail.matchResult.includes(myResult) ||
-                          data.matchDetail.matchResult.includes("무")
-                      )
-                      .reduce(
-                        (a, b) =>
-                          a.shoot?.goalTotalDisplay > b.shoot?.goalTotalDisplay
-                            ? a
-                            : b,
-                        {} as IMatchInfo
-                      ).shoot?.goalTotalDisplay}
-                </p>
-              </div>
-              {matchData.matchInfo &&
-                matchData.matchInfo
-                  .filter(
-                    (info) =>
-                      !info.matchDetail.matchResult.includes(myResult) ||
-                      info.matchDetail.matchResult.includes("무")
-                  )
-                  .reduce((a: React.ReactNode[], b, i) => {
-                    if (i === 0) {
-                      a.push(
-                        <div
-                          key={i}
-                          className="flex gap-[10px]"
+                        <p
+                          className={`${
+                            data.matchDetail.matchResult.includes("승")
+                              ? "text-indigo-600"
+                              : data.matchDetail.matchResult.includes("패")
+                              ? "text-red-600"
+                              : "text-yellow-600"
+                          } font-bold`}
                         >
-                          <p>상대팀</p>
-                          <p
-                            className={`${
-                              b.matchDetail.matchResult.includes("승")
-                                ? "text-indigo-600"
-                                : b.matchDetail.matchResult.includes("패")
-                                ? "text-red-600"
-                                : "text-yellow-600"
-                            } font-bold`}
+                          {data.matchDetail.matchResult}
+                        </p>
+                        <p>우리팀</p>
+                      </div>
+                    ))}
+                <div className="flex items-center gap-[5px]">
+                  <p className="hidden text-xl font-bold sm:block">
+                    {matchData.matchInfo &&
+                      matchData.matchInfo
+                        .filter(
+                          (data) =>
+                            data.ouid === ouid &&
+                            (data.matchDetail.matchResult.includes(myResult) ||
+                              data.matchDetail.matchResult.includes("무"))
+                        )
+                        .reduce(
+                          (a, b) =>
+                            a.shoot?.goalTotalDisplay >
+                            b.shoot?.goalTotalDisplay
+                              ? a
+                              : b,
+                          {} as IMatchInfo
+                        ).shoot?.goalTotalDisplay}
+                  </p>
+                  <p>vs</p>
+                  <p className="hidden text-xl font-bold sm:block">
+                    {matchData.matchInfo &&
+                      matchData.matchInfo
+                        .filter(
+                          (data) =>
+                            !data.matchDetail.matchResult.includes(myResult) ||
+                            data.matchDetail.matchResult.includes("무")
+                        )
+                        .reduce(
+                          (a, b) =>
+                            a.shoot?.goalTotalDisplay >
+                            b.shoot?.goalTotalDisplay
+                              ? a
+                              : b,
+                          {} as IMatchInfo
+                        ).shoot?.goalTotalDisplay}
+                  </p>
+                </div>
+                {matchData.matchInfo &&
+                  matchData.matchInfo
+                    .filter(
+                      (info) =>
+                        !info.matchDetail.matchResult.includes(myResult) ||
+                        info.matchDetail.matchResult.includes("무")
+                    )
+                    .reduce((a: React.ReactNode[], b, i) => {
+                      if (i === 0) {
+                        a.push(
+                          <div
+                            key={i}
+                            className="flex gap-[10px]"
                           >
-                            {b.matchDetail.matchResult}
-                          </p>
-                        </div>
-                      );
-                    }
-                    return a;
-                  }, [])}
-            </div>
-          )}
-          <p className="flex justify-end w-full sm:w-auto">
-            {momentDate(matchData.matchDate)}
-          </p>
-        </div>
-      </Link>
-    </li>
-  ) : (
-    <li className="w-full text-center">
-      <p>매치 데이터 불러오는 중...</p>
-    </li>
+                            <p>상대팀</p>
+                            <p
+                              className={`${
+                                b.matchDetail.matchResult.includes("승")
+                                  ? "text-indigo-600"
+                                  : b.matchDetail.matchResult.includes("패")
+                                  ? "text-red-600"
+                                  : "text-yellow-600"
+                              } font-bold`}
+                            >
+                              {b.matchDetail.matchResult}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return a;
+                    }, [])}
+              </div>
+            )}
+            <p className="flex justify-end w-full sm:w-auto">
+              {momentDate(matchData.matchDate)}
+            </p>
+          </div>
+        </Link>
+      </li>
+    )
   );
 }
