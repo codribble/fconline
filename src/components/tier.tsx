@@ -1,5 +1,5 @@
+import { momentDate } from "../utils/dateformat";
 import { IBestTier } from "./users/user_tier";
-import moment from "moment";
 
 export default function Tier({ desc, tier, achievementDate }: IBestTier) {
   return (
@@ -7,11 +7,7 @@ export default function Tier({ desc, tier, achievementDate }: IBestTier) {
       <p className="font-semibold text-xl">{desc}</p>
       <div className="flex justify-between">
         <p>{tier}</p>
-        <time>
-          {moment(moment.utc(moment.utc(achievementDate)).toDate()).format(
-            "YYYY년 MM월 DD일"
-          )}
-        </time>
+        <time>{momentDate(achievementDate, "YYYY년 MM월 DD일")}</time>
       </div>
     </li>
   );

@@ -1,9 +1,9 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
 import { ITrade } from "./users/user_trade";
 import { IPlayerInfo, ISeasonInfo } from "../routes/players";
 // import PlayerThumbs from "./players/player_thumbs";
 import StrongLevel from "./players/player_grade";
+import { momentDate } from "../utils/dateformat";
 
 export default function Trade({ tradeDate, spid, grade, value }: ITrade) {
   const seasonId = spid.toString().substring(0, 3);
@@ -47,9 +47,7 @@ export default function Trade({ tradeDate, spid, grade, value }: ITrade) {
   ) : (
     <li className="flex items-center justify-between py-[5px]">
       <p className="w-[200px] px-[10px] text-center">
-        {moment(moment.utc(moment.utc(tradeDate)).toDate()).format(
-          "YYYY.MM.DD HH:mm"
-        )}
+        {momentDate(tradeDate, "YYYY.MM.DD HH:mm")}
       </p>
       <div className="flex items-center justify-start gap-[10px] w-[calc(100%-500px)] px-[10px]">
         <div className="flex gap-[5px]">

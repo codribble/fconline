@@ -73,7 +73,7 @@ export default function UserTrade({ ouid }: IUserInfo) {
       </div>
 
       <div>
-        <div className="flex items-center justify-between py-[20px] border-solid border-t-2 border-b-[1px] border-t-white border-b-white">
+        <div className="flex items-center justify-between py-[10px] border-solid border-t-2 border-b-[1px] border-t-white border-b-white">
           <div className="w-[200px] text-center">
             <p>{tradeType === "buy" ? "구매" : "판매"} 일시</p>
           </div>

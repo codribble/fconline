@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IMatchData, IMatchInfo } from "./match_detail";
 import { IUserInfo } from "../routes/users";
-import moment from "moment";
+import { momentDate } from "../utils/dateformat";
 
 export interface IMatchItem {
   matchId: string;
@@ -239,9 +239,7 @@ export default function MatchItem({ matchId, ouid }: IMatchItem) {
             </div>
           )}
           <p className="flex justify-end w-full sm:w-auto">
-            {moment(
-              moment.utc(moment.utc(matchData.matchDate)).toDate()
-            ).format("YYYY-MM-DD HH:mm:ss")}
+            {momentDate(matchData.matchDate, "YYYY-MM-DD HH:mm:ss")}
           </p>
         </div>
       </Link>
