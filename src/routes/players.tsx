@@ -141,13 +141,21 @@ export default function Players() {
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
 
+    const listRefScrollHeight = listRef.current?.scrollHeight;
+    console.log(listRefScrollHeight);
+
     if (e.key === "ArrowDown") {
       if (relatedKeywords.length === 0) return;
 
       if (!isShowRelated) setIsShowRelated(true);
 
       if (listRef.current?.childElementCount === focusIndex + 1) {
-        setFocusIndex(() => 0);
+        setFocusIndex(0);
+        setAutoKeywords(relatedKeywords[0]);
+        listRef.current?.children[0].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
         return;
       }
 
@@ -155,6 +163,10 @@ export default function Players() {
 
       setFocusIndex((index) => index + 1);
       setAutoKeywords(relatedKeywords[focusIndex + 1]);
+      listRef.current?.children[focusIndex + 1].scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
     }
 
     if (e.key === "ArrowUp") {
@@ -170,6 +182,10 @@ export default function Players() {
 
       setFocusIndex((index) => index - 1);
       setAutoKeywords(relatedKeywords[focusIndex - 1]);
+      listRef.current?.children[focusIndex - 1].scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
     }
 
     if (e.key === "Escape") {
