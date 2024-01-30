@@ -58,7 +58,7 @@ export default function Trade({ tradeDate, spid, grade, value }: ITrade) {
         <StrongLevel level={grade} />
       </div>
       <p>{value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
-      <p>{momentDate(tradeDate, "YYYY.MM.DD HH:mm")}</p>
+      <p>{momentDate(tradeDate, "YYYY-MM-DD HH:mm")}</p>
     </li>
   );
 }

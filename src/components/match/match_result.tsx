@@ -95,40 +95,40 @@ export default function MatchResult({ matchData, ouid }: IResult) {
             <p className="py-[25px] border-b border-solid border-white/20 md:hidden">
               감독명
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               슛
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               유효슛
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               슛 성공률(%)
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               패스 성공률(%)
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               점유율(%)
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               코너킥
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               태클
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               파울
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               오프사이드
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               경고
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               퇴장
             </p>
-            <p className="py-[15px]">부상</p>
+            <p className="py-[10px]">부상</p>
           </div>
 
           <MatchDataChart matchData={oppositeData} />

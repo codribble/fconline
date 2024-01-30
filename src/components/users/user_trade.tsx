@@ -17,7 +17,7 @@ export default function UserTrade({ ouid }: IUserInfo) {
   const [tradeType, setTradeType] = useState("buy");
   const [tradeTotal, setTradeTotal] = useState(1);
   const [tradePage, setTradePage] = useState(1);
-  const tradeLimit = 10;
+  const tradeLimit = 20;
   const tradeOffset = (tradePage - 1) * tradeLimit;
 
   useEffect(() => {

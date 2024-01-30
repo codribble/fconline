@@ -29,7 +29,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
             <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
               {data.nickname}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.shoot.shootTotal !== null
                 ? Number(data.shoot.shootTotal)
                 : validateMatchResult
@@ -38,7 +38,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.shoot.effectiveShootTotal !== null
                 ? Number(data.shoot.effectiveShootTotal)
                 : validateMatchResult
@@ -47,7 +47,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.shoot.goalTotal !== null && data.shoot.shootTotal !== null
                 ? data.shoot.shootTotal !== 0
                   ? Math.floor(
@@ -60,7 +60,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.pass.passSuccess !== null && data.pass.passTry !== null
                 ? data.pass.passTry !== 0
                   ? Math.floor(
@@ -73,7 +73,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.matchDetail.possession !== null
                 ? Number(data.matchDetail.possession) + "%"
                 : validateMatchResult
@@ -82,7 +82,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.matchDetail.cornerKick !== null
                 ? Number(data.matchDetail.cornerKick)
                 : validateMatchResult
@@ -91,7 +91,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.defence.tackleSuccess !== null
                 ? Number(data.defence.tackleSuccess)
                 : validateMatchResult
@@ -100,7 +100,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.matchDetail.foul !== null
                 ? Number(data.matchDetail.foul)
                 : validateMatchResult
@@ -109,7 +109,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.matchDetail.offsideCount !== null
                 ? Number(data.matchDetail.offsideCount)
                 : validateMatchResult
@@ -118,7 +118,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.matchDetail.yellowCards !== null
                 ? Number(data.matchDetail.yellowCards)
                 : validateMatchResult
@@ -127,7 +127,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px] border-b border-solid border-white/20">
+            <p className="py-[10px] border-b border-solid border-white/20">
               {data.matchDetail.redCards !== null
                 ? Number(data.matchDetail.redCards)
                 : validateMatchResult
@@ -136,7 +136,7 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
                   : "몰수" + data.matchDetail.matchResult
                 : data.matchDetail.matchResult}
             </p>
-            <p className="py-[15px]">
+            <p className="py-[10px]">
               {data.matchDetail.injury !== null
                 ? Number(data.matchDetail.injury)
                 : validateMatchResult
@@ -152,18 +152,18 @@ export default function MatchDataChart({ matchData }: IMatchChart) {
           <p className="py-[25px] border-b border-solid border-white/20 font-bold md:hidden">
             -
           </p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px] border-b border-solid border-white/20">-</p>
-          <p className="py-[15px]">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px] border-b border-solid border-white/20">-</p>
+          <p className="py-[10px]">-</p>
         </div>
       )}
     </>
