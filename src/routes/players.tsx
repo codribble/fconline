@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Player from "../components/player";
 import Pagination from "../components/pagination";
+import { useNavigationType } from "react-router-dom";
 // import axios from "axios";
 // import * as cheerio from "cheerio";
 
@@ -16,6 +17,7 @@ export interface ISeasonInfo {
 }
 
 export default function Players() {
+  const navigationType = useNavigationType();
   const [isLoading, setIsLoading] = useState(true);
   const [isSearch, setIsSearch] = useState(false);
   const [isAutoSearch, setIsAutoSearch] = useState(false);
@@ -27,8 +29,9 @@ export default function Players() {
   const [autoKeywords, setAutoKeywords] = useState("");
   const [relatedKeywords, setRelatedKeywords] = useState<string[]>([]);
   const [checkedList, setCheckedList] = useState<string[]>([]);
+  // const [searchSeasons, setSearchSeasons] = useState<number[]>([]);
   const [focusIndex, setFocusIndex] = useState(-1);
-  const [total, setTotal] = useState(1);
+  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -41,7 +44,6 @@ export default function Players() {
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
-        setTotal(data.length);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -55,6 +57,42 @@ export default function Players() {
 
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (navigationType === "POP") {
+      const playerList = sessionStorage.getItem("SearchedPlayers");
+      const playerName = sessionStorage.getItem("SearchedKeywords");
+      const playerSeasons = sessionStorage.getItem("SearchedSeasons");
+
+      if (playerName) {
+        setKeywords(playerName);
+      }
+
+      if (playerSeasons) {
+        const seaonsJSON = JSON.parse(playerSeasons);
+
+        setCheckedList(seaonsJSON);
+      }
+
+      if (playerList) {
+        const playerJSON = JSON.parse(playerList);
+
+        setIsSearch(true);
+        setSearchPlayers(playerJSON);
+        setTotal(playerJSON.length);
+        setIsShowRelated(false);
+      }
+    }
+
+    if (navigationType === "PUSH") {
+      setKeywords("");
+      setCheckedList([]);
+      setSearchPlayers([]);
+      setTotal(0);
+      setIsShowRelated(false);
+      sessionStorage.clear();
+    }
+  }, [navigationType]);
 
   const onKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -187,6 +225,9 @@ export default function Players() {
       return keywordCase && seasonCase;
     });
 
+    sessionStorage.setItem("SearchedSeasons", JSON.stringify(checkedList));
+    sessionStorage.setItem("SearchedKeywords", keywords);
+    sessionStorage.setItem("SearchedPlayers", JSON.stringify(filteredPlayers));
     setIsSearch(keywords.length > 0 || checkedList.length > 0);
     setSearchPlayers(filteredPlayers);
     setTotal(filteredPlayers.length);
@@ -282,6 +323,7 @@ export default function Players() {
                     value={season.seasonId}
                     className="hidden peer"
                     onChange={onCheckedSsesons}
+                    checked={checkedList.includes(season.seasonId.toString())}
                   />
                   <label
                     htmlFor={season.seasonId.toString()}
@@ -301,7 +343,11 @@ export default function Players() {
 
       <div className="flex flex-col flex-wrap mt-10">
         <p className="mb-[20px] text-lg">
-          검색 결과: <span className="font-bold">{total}</span> 명
+          검색 결과:
+          <span className="ml-[5px] font-bold">
+            {isSearch ? total : players.length}
+          </span>
+          명
         </p>
 
         <ul
