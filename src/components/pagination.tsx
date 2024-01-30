@@ -14,42 +14,6 @@ export interface Pagination {
   page: number;
 }
 
-/* const Wrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 30px;
-`;
-
-const Button = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 5px;
-  background-color: #eee;
-  border: 0;
-  border-radius: 5px;
-  font-size: 14px;
-  color: black;
-  cursor: pointer;
-
-  &[disabled] {
-    background-color: #666;
-    cursor: default;
-  }
-
-  &.current {
-    background-color: yellow;
-    color: black;
-  }
-`;
-
-const Separator = styled.div`
-  margin: 0px 4px;
-`; */
-
 export default function Pagination({
   setPage,
   total,
@@ -65,7 +29,7 @@ export default function Pagination({
     >
       <button
         className="relative inline-flex items-center rounded-l-md px-2 py-2 bg-white text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-70"
-        onClick={() => setPage(page - 3)}
+        onClick={() => setPage(page - 3 < 1 ? 1 : page - 3)}
         disabled={page === 1}
       >
         <span className="sr-only">이전 페이지 그룹</span>
@@ -192,7 +156,7 @@ export default function Pagination({
 
       <button
         className="relative inline-flex items-center rounded-r-md px-2 py-2 bg-white text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-70"
-        onClick={() => setPage(page + 3)}
+        onClick={() => setPage(page + 3 > numPages ? numPages : page + 3)}
         disabled={page === numPages}
         title="다음 페이지 그룹"
       >
