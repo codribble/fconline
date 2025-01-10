@@ -1,27 +1,28 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FirebaseError } from "firebase/app";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
 import {
   Divide,
   Error,
-  ForgotPasswordBtn,
   Form,
   HalfBox,
   Inner,
   Input,
+  // Slogan,
+  SubTitle,
   Switcher,
   // Title,
   Wrapper,
 } from "../components/auth-components";
-import SocialAuth from "../components/social-auth";
 // import GithubButton from "../components/github-btn";
-// import GoogleButton from "../components/google-btn";
+import SocialAuth from "../components/social-auth";
 
-export default function Login() {
+export default function CreateAccount() {
   const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -30,7 +31,9 @@ export default function Login() {
       target: { name, value },
     } = e;
 
-    if (name === "email") {
+    if (name === "name") {
+      setName(value);
+    } else if (name === "email") {
       setEmail(value);
     } else if (name === "password") {
       setPassword(value);
@@ -40,14 +43,21 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
-    if (isLoading || email === "" || password === "") return;
+    if (isLoading || name === "" || email === "" || password === "") return;
     try {
       // create an account
       // set the name of the user
       // redirect to the home page
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      const credentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await updateProfile(credentials.user, {
+        displayName: name,
+      });
+      navigate("/home");
     } catch (e) {
       // setError
       if (e instanceof FirebaseError) {
@@ -57,25 +67,26 @@ export default function Login() {
       setLoading(false);
     }
   };
-  const onForgotPassword = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
-    navigate("/forgot-password");
-  };
 
   return (
     <Wrapper>
       <HalfBox>
         <Inner>
-          {/* <Title>가입하기</Title> */}
-
-          <SocialAuth page="login" />
+          <SocialAuth page="register" />
 
           <Divide>
             <span>또는</span>
           </Divide>
 
           <Form onSubmit={onSubmit}>
+            <Input
+              onChange={onChange}
+              name="name"
+              value={name}
+              placeholder="이름"
+              type="text"
+              required
+            />
             <Input
               onChange={onChange}
               name="email"
@@ -94,15 +105,13 @@ export default function Login() {
             />
             <Input
               type="submit"
-              value={isLoading ? "로그인중..." : "로그인"}
+              value={isLoading ? "계정 생성중..." : "계정 만들기"}
             />
           </Form>
           {error !== "" ? <Error>{error}</Error> : null}
-
           <Switcher>
-            <ForgotPasswordBtn onClick={onForgotPassword}>
-              비밀번호를 잊으셨나요?
-            </ForgotPasswordBtn>
+            <SubTitle>이미 가입하셨나요?</SubTitle>
+            <Link to="/login">로그인</Link>
           </Switcher>
         </Inner>
       </HalfBox>

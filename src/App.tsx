@@ -5,6 +5,7 @@ import {
   // createBrowserRouter,
   createHashRouter,
 } from "react-router-dom";
+import { auth } from "./firebase";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import Layout from "./components/layout";
@@ -83,6 +84,7 @@ const GlobalStyles = createGlobalStyle`
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const init = async () => {
+    await auth.authStateReady();
     setIsLoading(false);
   };
 

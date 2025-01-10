@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <>
       <header className="flex justify-center fixed top-0 w-full py-5 bg-white z-10">
-        <nav>
+        <nav className="flex justify-b">
           <ul
             role="list"
             className="flex items-center gap-5"
@@ -24,6 +24,14 @@ export default function Header() {
               >
                 유저 검색
               </Link>
+            </li>
+          </ul>
+          <ul role="list" className="flex items-center gpa-5">
+            <li>
+              <Link to="/login" className="text-gray-900">로그인</Link>
+            </li>
+            <li>
+              <Link to="/logout" className="text-gray-900">로그아웃</Link>
             </li>
           </ul>
         </nav>
